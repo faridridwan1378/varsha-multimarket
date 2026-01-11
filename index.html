@@ -720,6 +720,10 @@
                 <button onclick="closeShippingModal()" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-300 transition">Batal</button>
                 <button onclick="confirmOrderWithShipping()" class="flex-1 bg-green-500 text-white py-3 rounded-xl font-semibold hover:bg-green-600 transition">Kirim ke Pembeli</button>
             </div>
+            <button onclick="confirmOrderWithShippingAndWA()" class="w-full mt-3 bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                Kirim ke Pembeli + WhatsApp
+            </button>
         </div>
     </div>
 
@@ -760,6 +764,10 @@
                 <button onclick="cancelOrderByBuyer()" class="flex-1 bg-red-500 text-white py-3 rounded-xl font-semibold hover:bg-red-600 transition">❌ Batalkan</button>
                 <button onclick="confirmOrderByBuyer()" class="flex-1 bg-green-500 text-white py-3 rounded-xl font-semibold hover:bg-green-600 transition">💳 Lanjutkan & Bayar</button>
             </div>
+            <button onclick="confirmOrderByBuyerAndWA()" class="w-full mt-3 bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                Lanjutkan & Bayar + WhatsApp ke Penjual
+            </button>
         </div>
     </div>
 
@@ -782,6 +790,10 @@
                 <button onclick="closePaymentModal()" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-300 transition">Batal</button>
                 <button onclick="confirmPaymentReceived()" class="flex-1 bg-green-500 text-white py-3 rounded-xl font-semibold hover:bg-green-600 transition">✅ Pembayaran Diterima</button>
             </div>
+            <button onclick="confirmPaymentReceivedAndWA()" class="w-full mt-3 bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                Konfirmasi + WhatsApp ke Pembeli
+            </button>
         </div>
     </div>
 
@@ -816,6 +828,10 @@
                 <button onclick="closeShippingConfirmModal()" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-300 transition">Batal</button>
                 <button onclick="confirmShipping()" class="flex-1 bg-blue-500 text-white py-3 rounded-xl font-semibold hover:bg-blue-600 transition">🚚 Konfirmasi Dikirim</button>
             </div>
+            <button onclick="confirmShippingAndWA()" class="w-full mt-3 bg-green-600 text-white py-3 rounded-xl font-semibold hover:bg-green-700 transition flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                Konfirmasi Kirim + WhatsApp ke Pembeli
+            </button>
         </div>
     </div>
 
@@ -2343,6 +2359,10 @@
                                     ✅ Selesai
                                 </button>
                             ` : ''}
+                            <button onclick="chatWithBuyer('${order.id}')" class="bg-green-600 text-white px-3 py-2 rounded-lg text-sm hover:bg-green-700 flex items-center gap-1">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                                Chat
+                            </button>
                             <button onclick="deleteOrder('${order.id}')" class="bg-red-100 text-red-600 px-3 py-2 rounded-lg text-sm hover:bg-red-200">🗑️</button>
                         </div>
                     </div>
@@ -2433,6 +2453,11 @@
                                 <p class="text-sm text-blue-800 font-mono">${order.trackingNumber}</p>
                             </div>
                         ` : ''}
+
+                        <button onclick="chatWithSeller('${order.id}')" class="w-full mt-3 bg-green-600 text-white py-2 rounded-lg font-semibold hover:bg-green-700 flex items-center justify-center gap-2 text-sm">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                            Chat Penjual
+                        </button>
                     </div>
                 `;
             }).join('');
@@ -2707,6 +2732,281 @@
             } finally {
                 hideLoading();
             }
+        }
+
+        // ==================== WHATSAPP FUNCTIONS ====================
+        function formatPhoneForWA(phone) {
+            if (!phone) return '';
+            let cleaned = phone.replace(/\D/g, '');
+            if (cleaned.startsWith('0')) {
+                cleaned = '62' + cleaned.substring(1);
+            } else if (!cleaned.startsWith('62')) {
+                cleaned = '62' + cleaned;
+            }
+            return cleaned;
+        }
+
+        function openWhatsApp(phone, message) {
+            const waPhone = formatPhoneForWA(phone);
+            const encodedMessage = encodeURIComponent(message);
+            window.open(`https://wa.me/${waPhone}?text=${encodedMessage}`, '_blank');
+        }
+
+        // Penjual kirim ongkir ke pembeli + WA
+        async function confirmOrderWithShippingAndWA() {
+            if (!currentOrderForShipping) return;
+
+            const shippingCost = parseInt(document.getElementById('shippingCostInput').value) || 0;
+            const sellerNote = document.getElementById('sellerNoteInput').value.trim();
+            const grandTotal = currentOrderForShipping.subtotal + shippingCost;
+
+            showLoading('Mengirim ke pembeli...');
+
+            try {
+                await db.collection('orders').doc(currentOrderForShipping.id).update({
+                    shippingCost,
+                    grandTotal,
+                    sellerNote,
+                    status: 'waiting_buyer',
+                    updatedAt: Date.now()
+                });
+                closeShippingModal();
+
+                // Buat pesan WA
+                const itemsList = currentOrderForShipping.items.map(item => `• ${item.name} x${item.qty} = ${formatRupiah(item.price * item.qty)}`).join('\n');
+                const storeName = storeData?.name || 'Fruits & Goods';
+                
+                const waMessage = `Halo *${currentOrderForShipping.buyerName}* 👋
+
+Pesanan Anda di *${storeName}* telah dikonfirmasi! ✅
+
+📋 *ID Pesanan:* ${currentOrderForShipping.id}
+
+🛒 *Detail Pesanan:*
+${itemsList}
+
+💰 *Subtotal:* ${formatRupiah(currentOrderForShipping.subtotal)}
+🚚 *Ongkos Kirim:* ${formatRupiah(shippingCost)}
+━━━━━━━━━━━━━━━
+💵 *TOTAL BAYAR:* ${formatRupiah(grandTotal)}
+
+${sellerNote ? `📝 *Catatan:* ${sellerNote}\n` : ''}
+💳 *Transfer ke:*
+🏦 ${storeData?.bankName || 'Bank'}: ${storeData?.bankAccount || '-'}
+👤 a.n. ${storeData?.bankAccountName || '-'}
+
+Mohon segera lakukan pembayaran dan konfirmasi. Terima kasih! 🙏`;
+
+                openWhatsApp(currentOrderForShipping.buyerPhone, waMessage);
+
+            } catch (error) {
+                alert('❌ Gagal: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Pembeli konfirmasi pesanan + WA ke penjual
+        async function confirmOrderByBuyerAndWA() {
+            if (!currentOrderForConfirm) return;
+
+            showLoading('Mengkonfirmasi...');
+
+            try {
+                await db.collection('orders').doc(currentOrderForConfirm.id).update({
+                    status: 'waiting_payment',
+                    buyerConfirmedAt: Date.now()
+                });
+                closeBuyerConfirmModal();
+
+                // Buat pesan WA ke penjual
+                const itemsList = currentOrderForConfirm.items.map(item => `• ${item.name} x${item.qty}`).join('\n');
+                const buyerName = currentUserData?.name || 'Pembeli';
+                const buyerPhone = currentUserData?.phone || '';
+                const buyerAddress = currentUserData?.address || '';
+                
+                const waMessage = `Halo Admin *${storeData?.name || 'Fruits & Goods'}* 👋
+
+Saya *${buyerName}* ingin melanjutkan pesanan:
+
+📋 *ID Pesanan:* ${currentOrderForConfirm.id}
+
+🛒 *Pesanan:*
+${itemsList}
+
+💵 *Total Bayar:* ${formatRupiah(currentOrderForConfirm.grandTotal)}
+
+📱 *No. HP:* ${buyerPhone}
+📍 *Alamat:* ${buyerAddress}
+
+Saya akan segera transfer. Mohon konfirmasi setelah pembayaran diterima. Terima kasih! 🙏`;
+
+                openWhatsApp(storeData?.phone, waMessage);
+
+                alert('✅ Pesanan dikonfirmasi!\n\nSilakan transfer ke rekening penjual.');
+
+            } catch (error) {
+                alert('❌ Gagal: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Penjual konfirmasi pembayaran + WA ke pembeli
+        async function confirmPaymentReceivedAndWA() {
+            if (!currentOrderForPayment) return;
+
+            showLoading('Mengkonfirmasi...');
+
+            try {
+                await db.collection('orders').doc(currentOrderForPayment.id).update({
+                    status: 'processing',
+                    paymentConfirmedAt: Date.now()
+                });
+                closePaymentModal();
+
+                // Buat pesan WA
+                const storeName = storeData?.name || 'Fruits & Goods';
+                
+                const waMessage = `Halo *${currentOrderForPayment.buyerName}* 👋
+
+Pembayaran pesanan Anda telah kami terima! ✅💰
+
+📋 *ID Pesanan:* ${currentOrderForPayment.id}
+💵 *Total:* ${formatRupiah(currentOrderForPayment.grandTotal)}
+
+🔄 Status: *SEDANG DIPROSES*
+
+Pesanan Anda sedang kami siapkan dan akan segera dikirim. 📦
+
+Terima kasih telah berbelanja di *${storeName}*! 🙏`;
+
+                openWhatsApp(currentOrderForPayment.buyerPhone, waMessage);
+
+            } catch (error) {
+                alert('❌ Gagal: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // Penjual konfirmasi pengiriman + WA ke pembeli
+        async function confirmShippingAndWA() {
+            if (!currentOrderForShippingConfirm) return;
+
+            const courier = document.getElementById('courierSelect').options[document.getElementById('courierSelect').selectedIndex].text;
+            const trackingNumber = document.getElementById('trackingNumberInput').value.trim();
+
+            showLoading('Mengkonfirmasi pengiriman...');
+
+            try {
+                await db.collection('orders').doc(currentOrderForShippingConfirm.id).update({
+                    status: 'shipped',
+                    courier,
+                    trackingNumber,
+                    shippedAt: Date.now()
+                });
+                closeShippingConfirmModal();
+
+                // Buat pesan WA
+                const storeName = storeData?.name || 'Fruits & Goods';
+                
+                const waMessage = `Halo *${currentOrderForShippingConfirm.buyerName}* 👋
+
+Pesanan Anda sudah dikirim! 🚚✨
+
+📋 *ID Pesanan:* ${currentOrderForShippingConfirm.id}
+
+🚚 *Kurir:* ${courier}
+${trackingNumber ? `📦 *No. Resi:* ${trackingNumber}` : ''}
+
+📍 *Alamat Pengiriman:*
+${currentOrderForShippingConfirm.buyerAddress}
+
+Mohon tunggu pesanan Anda sampai. Jika ada pertanyaan, silakan hubungi kami.
+
+Terima kasih telah berbelanja di *${storeName}*! 🙏`;
+
+                openWhatsApp(currentOrderForShippingConfirm.buyerPhone, waMessage);
+
+            } catch (error) {
+                alert('❌ Gagal: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ==================== CHAT FUNCTIONS ====================
+        // Penjual chat ke Pembeli
+        function chatWithBuyer(orderId) {
+            const order = ordersCache.find(o => o.id === orderId);
+            if (!order) return;
+
+            const storeName = storeData?.name || 'Fruits & Goods';
+            const itemsList = order.items.map(item => `• ${item.name} x${item.qty}`).join('\n');
+            
+            const statusLabels = {
+                pending: 'Menunggu konfirmasi ongkir',
+                waiting_buyer: 'Menunggu konfirmasi Anda',
+                waiting_payment: 'Menunggu pembayaran',
+                processing: 'Sedang diproses',
+                shipped: 'Sedang dikirim',
+                completed: 'Selesai',
+                cancelled: 'Dibatalkan'
+            };
+
+            const waMessage = `Halo *${order.buyerName}* 👋
+
+Ini dari *${storeName}*.
+
+Mengenai pesanan Anda:
+📋 *ID:* ${order.id}
+📦 *Status:* ${statusLabels[order.status] || order.status}
+
+🛒 *Pesanan:*
+${itemsList}
+
+💵 *Total:* ${formatRupiah(order.grandTotal)}
+
+Ada yang bisa kami bantu? 😊`;
+
+            openWhatsApp(order.buyerPhone, waMessage);
+        }
+
+        // Pembeli chat ke Penjual
+        function chatWithSeller(orderId) {
+            const order = ordersCache.find(o => o.id === orderId);
+            if (!order) return;
+
+            const storeName = storeData?.name || 'Fruits & Goods';
+            const buyerName = currentUserData?.name || 'Pembeli';
+            const itemsList = order.items.map(item => `• ${item.name} x${item.qty}`).join('\n');
+            
+            const statusLabels = {
+                pending: 'Menunggu konfirmasi ongkir',
+                waiting_buyer: 'Menunggu konfirmasi saya',
+                waiting_payment: 'Menunggu pembayaran',
+                processing: 'Sedang diproses',
+                shipped: 'Sedang dikirim',
+                completed: 'Selesai',
+                cancelled: 'Dibatalkan'
+            };
+
+            const waMessage = `Halo Admin *${storeName}* 👋
+
+Saya *${buyerName}* ingin bertanya tentang pesanan:
+
+📋 *ID Pesanan:* ${order.id}
+📦 *Status:* ${statusLabels[order.status] || order.status}
+
+🛒 *Pesanan:*
+${itemsList}
+
+💵 *Total:* ${formatRupiah(order.grandTotal)}
+
+`;
+
+            openWhatsApp(storeData?.phone, waMessage);
         }
 
         // Initialize
