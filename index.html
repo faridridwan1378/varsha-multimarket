@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fruits & Goods</title>
+    <title>🛒 Fruits & Goods</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -70,9 +70,9 @@
     <div id="authModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-[90] p-4 hidden">
         <div class="bg-white rounded-2xl p-6 max-w-md w-full fade-in max-h-[90vh] overflow-y-auto">
             <div class="text-center mb-6">
-                <img src="logo/VarshA_LOGO.png" alt="Logo" class="w-20 h-20 object-cover rounded-full mx-auto mb-2">
+                <img src="https://raw.githubusercontent.com/faridridwan1378/varsha-catalog/main/gambar buah/logo-varsha.png" alt="Logo" class="w-20 h-20 object-contain mx-auto mb-2">
                 <h2 class="text-2xl font-bold text-green-600">Fruits & Goods</h2>
-                <p class="text-gray-500 text-sm">Selamat datang!</p>
+                <p class="text-gray-500 text-sm">Welcome! Fresh fruits & more</p>
             </div>
 
             <div class="flex mb-6 bg-gray-100 rounded-xl p-1">
@@ -82,14 +82,45 @@
 
             <!-- Login Form -->
             <div id="loginForm">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Masuk Sebagai</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="loginRole" value="buyer" class="hidden peer" checked onchange="toggleLoginFieldByRole()">
+                            <div class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-orange-500 peer-checked:bg-orange-50 transition">
+                                <span class="text-2xl block mb-1">🛒</span>
+                                <span class="font-medium text-gray-700 text-sm">Pembeli</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="loginRole" value="seller" class="hidden peer" onchange="toggleLoginFieldByRole()">
+                            <div class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-green-500 peer-checked:bg-green-50 transition">
+                                <span class="text-2xl block mb-1">👨‍💼</span>
+                                <span class="font-medium text-gray-700 text-sm">Penjual</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="space-y-4">
-                    <div>
+                    <!-- Login Pembeli: No. Telepon -->
+                    <div id="loginPhoneField">
                         <label class="block text-sm font-medium text-gray-700 mb-1">📱 No. Telepon</label>
                         <input type="tel" id="loginPhone" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-green-500 focus:outline-none" placeholder="08123456789">
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">🔒 Password</label>
+                            <input type="password" id="loginPasswordPhone" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-green-500 focus:outline-none" placeholder="Masukkan password">
+                        </div>
                     </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">🔒 Password</label>
-                        <input type="password" id="loginPassword" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-green-500 focus:outline-none" placeholder="Masukkan password">
+                    <!-- Login Penjual: Email -->
+                    <div id="loginEmailField" class="hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">📧 Email</label>
+                        <input type="email" id="loginEmail" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-green-500 focus:outline-none" placeholder="email@contoh.com">
+                        <p class="text-xs text-gray-400 mt-1">Gunakan email yang didaftarkan saat registrasi</p>
+                        <div class="mt-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">🔒 Password</label>
+                            <input type="password" id="loginPasswordEmail" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-green-500 focus:outline-none" placeholder="Masukkan password">
+                        </div>
                     </div>
                 </div>
                 <button onclick="handleLogin()" class="w-full mt-6 bg-green-500 text-white py-3 rounded-xl font-semibold hover:bg-green-600 transition">
@@ -150,14 +181,29 @@
                 </button>
             </div>
 
-            <div id="authError" class="hidden mt-4 bg-red-50 text-red-600 p-3 rounded-lg text-sm"></div>
+            <div id="authError" class="hidden mt-4 bg-red-50 text-red-600 p-3 rounded-lg text-sm whitespace-pre-line"></div>
+
+            <!-- Sync Status -->
+            <div id="syncStatus" class="mt-4 p-3 rounded-xl bg-gray-50 text-center">
+                <div class="flex items-center justify-center gap-2 text-gray-600 mb-2">
+                    <span id="syncIcon">☁️</span>
+                    <span id="syncText" class="text-sm">Terhubung ke Firebase Cloud</span>
+                </div>
+                <button onclick="syncWithFirebase()" id="syncBtn" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition flex items-center gap-2 mx-auto">
+                    <span id="syncSpinner" class="hidden w-4 h-4 border-2 border-white border-t-transparent rounded-full spinner"></span>
+                    🔄 Sync dengan Firebase
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- Mode Selection -->
     <div id="modeSelection" class="min-h-screen flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-lg w-full text-center">
-            <h1 class="text-4xl font-bold text-green-600 mb-2">Fruits & Goods</h1>
+            <div class="flex items-center justify-center gap-3 mb-2">
+                <img src="https://raw.githubusercontent.com/faridridwan1378/varsha-catalog/main/gambar buah/logo-varsha.png" alt="Logo" class="w-16 h-16 object-contain">
+                <h1 class="text-4xl font-bold text-green-600">Fruits & Goods</h1>
+            </div>
             
             <div id="userInfoCard" class="bg-gradient-to-r from-green-50 to-orange-50 rounded-xl p-4 mb-4">
                 <div class="flex items-center justify-center gap-3">
@@ -190,7 +236,7 @@
         <header class="bg-white shadow-md sticky top-0 z-50">
             <div class="container mx-auto px-4 py-4 flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <span class="text-3xl">🍎</span>
+                    <span class="text-3xl">🛒</span>
                     <div>
                         <h1 class="text-xl font-bold text-green-600" id="storeNameHeader">Fruits & Goods</h1>
                         <p class="text-xs text-gray-400">Halo, <span id="buyerNameHeader" class="font-semibold text-gray-600"></span></p>
@@ -213,7 +259,7 @@
         <!-- Store Info Banner -->
         <div id="storeInfoBanner" class="bg-gradient-to-r from-green-500 to-green-600 text-white py-4 px-4">
             <div class="container mx-auto flex items-center gap-4">
-                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-3xl overflow-hidden" id="storeLogoBanner"><img src="logo/VarshA_LOGO.png" alt="Logo" class="w-full h-full object-cover rounded-full"></div>
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-3xl overflow-hidden" id="storeLogoBanner">🛒</div>
                 <div>
                     <h2 class="text-xl font-bold" id="storeNameBanner">Fruits & Goods</h2>
                     <p class="text-sm opacity-90" id="storeAddressBanner">📍 Alamat toko</p>
@@ -228,7 +274,7 @@
         </div>
 
         <main class="container mx-auto px-4 py-8">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">🍊 Pilih Buah Segar</h2>
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">🍊 Pilih Produk Segar</h2>
             <div id="fruitsGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
             <div id="noProducts" class="hidden text-center py-12 text-gray-400">
                 <span class="text-6xl block mb-4">📦</span>
@@ -294,10 +340,11 @@
         <!-- Seller Tabs -->
         <div class="bg-white border-b">
             <div class="container mx-auto px-4">
-                <div class="flex gap-6">
-                    <button onclick="switchSellerTab('orders')" id="tabOrders" class="py-4 px-2 font-medium text-gray-600 tab-active">📋 Pesanan Masuk</button>
-                    <button onclick="switchSellerTab('products')" id="tabProducts" class="py-4 px-2 font-medium text-gray-600">📦 Kelola Produk</button>
-                    <button onclick="switchSellerTab('store')" id="tabStore" class="py-4 px-2 font-medium text-gray-600">🏪 Pengaturan Toko</button>
+                <div class="flex gap-4 overflow-x-auto">
+                    <button onclick="switchSellerTab('orders')" id="tabOrders" class="py-4 px-2 font-medium text-gray-600 tab-active whitespace-nowrap">📋 Pesanan Masuk</button>
+                    <button onclick="switchSellerTab('products')" id="tabProducts" class="py-4 px-2 font-medium text-gray-600 whitespace-nowrap">📦 Kelola Produk</button>
+                    <button onclick="switchSellerTab('store')" id="tabStore" class="py-4 px-2 font-medium text-gray-600 whitespace-nowrap">🏪 Pengaturan Toko</button>
+                    <button onclick="switchSellerTab('header')" id="tabHeader" class="py-4 px-2 font-medium text-gray-600 whitespace-nowrap">📝 Kelola Header</button>
                 </div>
             </div>
         </div>
@@ -349,9 +396,14 @@
             <div id="productsTab" class="hidden">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-gray-800">📦 Kelola Produk</h2>
-                    <button onclick="openProductModal()" class="bg-green-500 text-white px-4 py-2 rounded-xl font-semibold hover:bg-green-600 transition">
-                        + Tambah Produk
-                    </button>
+                    <div class="flex gap-2">
+                        <button onclick="addSampleProducts()" class="bg-orange-500 text-white px-4 py-2 rounded-xl font-semibold hover:bg-orange-600 transition">
+                            🍎 Tambah Sample
+                        </button>
+                        <button onclick="openProductModal()" class="bg-green-500 text-white px-4 py-2 rounded-xl font-semibold hover:bg-green-600 transition">
+                            + Tambah Produk
+                        </button>
+                    </div>
                 </div>
                 <div id="productsList" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
                 <div id="noProductsSeller" class="hidden text-center py-12 text-gray-400">
@@ -361,9 +413,127 @@
                 </div>
             </div>
 
+            <!-- Header Settings Tab -->
+            <div id="headerTab" class="hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">📝 Kelola Header</h2>
+                    <button onclick="restoreHeaderFromFirebase()" class="bg-blue-500 text-white px-4 py-2 rounded-xl font-semibold hover:bg-blue-600 transition flex items-center gap-2">
+                        🔄 Restore dari Firebase
+                    </button>
+                </div>
+                <div class="bg-white rounded-2xl shadow-lg p-6 max-w-2xl">
+                    <!-- Preview Header -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-3">👁️ Preview Header</label>
+                        <div id="headerPreview" class="rounded-xl overflow-hidden shadow-lg">
+                            <div id="previewBanner" class="bg-gradient-to-r from-green-500 to-green-600 text-white py-4 px-4">
+                                <div class="flex items-center gap-4">
+                                    <div id="previewLogo" class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-3xl overflow-hidden">🛒</div>
+                                    <div>
+                                        <h2 id="previewStoreName" class="text-xl font-bold">Fruits & Goods</h2>
+                                        <p id="previewTagline" class="text-sm opacity-90">Fresh fruits & more</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">🏪 Nama Header/Toko</label>
+                            <input type="text" id="headerStoreName" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-green-500 focus:outline-none" placeholder="Fruits & Goods" oninput="updateHeaderPreview()">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">💬 Tagline</label>
+                            <input type="text" id="headerTagline" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-green-500 focus:outline-none" placeholder="Fresh fruits & more" oninput="updateHeaderPreview()">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">🎨 Emoji Logo</label>
+                            <input type="text" id="headerEmoji" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-green-500 focus:outline-none text-3xl text-center" placeholder="🛒" maxlength="2" oninput="updateHeaderPreview()">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">🖼️ URL Logo (opsional)</label>
+                            <input type="url" id="headerLogoUrl" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-green-500 focus:outline-none text-sm" placeholder="https://example.com/logo.png" oninput="updateHeaderPreview()">
+                        </div>
+                    </div>
+
+                    <hr class="my-6">
+
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">🎨 Warna Banner</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="bannerColor" value="green" class="hidden peer" checked onchange="updateHeaderPreview()">
+                            <div class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-green-500 peer-checked:ring-2 peer-checked:ring-green-200 transition">
+                                <div class="w-full h-8 bg-gradient-to-r from-green-500 to-green-600 rounded-lg mb-2"></div>
+                                <span class="text-sm text-gray-600">Hijau</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="bannerColor" value="orange" class="hidden peer" onchange="updateHeaderPreview()">
+                            <div class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-orange-500 peer-checked:ring-2 peer-checked:ring-orange-200 transition">
+                                <div class="w-full h-8 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg mb-2"></div>
+                                <span class="text-sm text-gray-600">Oranye</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="bannerColor" value="blue" class="hidden peer" onchange="updateHeaderPreview()">
+                            <div class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-blue-500 peer-checked:ring-2 peer-checked:ring-blue-200 transition">
+                                <div class="w-full h-8 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg mb-2"></div>
+                                <span class="text-sm text-gray-600">Biru</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="bannerColor" value="purple" class="hidden peer" onchange="updateHeaderPreview()">
+                            <div class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-purple-500 peer-checked:ring-2 peer-checked:ring-purple-200 transition">
+                                <div class="w-full h-8 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg mb-2"></div>
+                                <span class="text-sm text-gray-600">Ungu</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="bannerColor" value="red" class="hidden peer" onchange="updateHeaderPreview()">
+                            <div class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-red-500 peer-checked:ring-2 peer-checked:ring-red-200 transition">
+                                <div class="w-full h-8 bg-gradient-to-r from-red-500 to-red-600 rounded-lg mb-2"></div>
+                                <span class="text-sm text-gray-600">Merah</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="bannerColor" value="pink" class="hidden peer" onchange="updateHeaderPreview()">
+                            <div class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-pink-500 peer-checked:ring-2 peer-checked:ring-pink-200 transition">
+                                <div class="w-full h-8 bg-gradient-to-r from-pink-500 to-pink-600 rounded-lg mb-2"></div>
+                                <span class="text-sm text-gray-600">Pink</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="bannerColor" value="teal" class="hidden peer" onchange="updateHeaderPreview()">
+                            <div class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-teal-500 peer-checked:ring-2 peer-checked:ring-teal-200 transition">
+                                <div class="w-full h-8 bg-gradient-to-r from-teal-500 to-teal-600 rounded-lg mb-2"></div>
+                                <span class="text-sm text-gray-600">Teal</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="bannerColor" value="gray" class="hidden peer" onchange="updateHeaderPreview()">
+                            <div class="border-2 border-gray-200 rounded-xl p-3 text-center peer-checked:border-gray-500 peer-checked:ring-2 peer-checked:ring-gray-200 transition">
+                                <div class="w-full h-8 bg-gradient-to-r from-gray-700 to-gray-800 rounded-lg mb-2"></div>
+                                <span class="text-sm text-gray-600">Abu-abu</span>
+                            </div>
+                        </label>
+                    </div>
+
+                    <button onclick="saveHeaderSettings()" class="w-full mt-6 bg-green-500 text-white py-3 rounded-xl font-semibold hover:bg-green-600 transition">
+                        💾 Simpan Header
+                    </button>
+                </div>
+            </div>
+
             <!-- Store Settings Tab -->
             <div id="storeTab" class="hidden">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6">🏪 Pengaturan Toko</h2>
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-gray-800">🏪 Pengaturan Toko</h2>
+                    <button onclick="restoreStoreFromFirebase()" class="bg-blue-500 text-white px-4 py-2 rounded-xl font-semibold hover:bg-blue-600 transition flex items-center gap-2">
+                        <span class="spinner hidden w-4 h-4 border-2 border-white border-t-transparent rounded-full" id="restoreSpinner"></span>
+                        🔄 Restore dari Firebase
+                    </button>
+                </div>
                 <div class="bg-white rounded-2xl shadow-lg p-6 max-w-2xl">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="md:col-span-2">
@@ -380,7 +550,7 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">🎨 Emoji Toko</label>
-                            <input type="text" id="storeLogo" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-green-500 focus:outline-none text-3xl text-center" placeholder="Logo" maxlength="2" oninput="updateStoreLogoPreview()">
+                            <input type="text" id="storeLogo" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-green-500 focus:outline-none text-3xl text-center" placeholder="🍎" maxlength="2" oninput="updateStoreLogoPreview()">
                         </div>
                     </div>
 
@@ -701,8 +871,98 @@
                         showAuthModal();
                     }
                 });
+                
+                // Update sync status
+                updateSyncStatus('connected');
             } catch (e) {
                 console.error('Firebase init error:', e);
+                updateSyncStatus('error', e.message);
+            }
+        }
+
+        function updateSyncStatus(status, message = '') {
+            const syncIcon = document.getElementById('syncIcon');
+            const syncText = document.getElementById('syncText');
+            const syncStatus = document.getElementById('syncStatus');
+            
+            if (!syncIcon || !syncText || !syncStatus) return;
+            
+            switch (status) {
+                case 'connected':
+                    syncIcon.textContent = '✅';
+                    syncText.textContent = 'Terhubung ke Firebase Cloud';
+                    syncStatus.className = 'mt-4 p-3 rounded-xl bg-green-50 text-center';
+                    syncText.className = 'text-sm text-green-700';
+                    break;
+                case 'syncing':
+                    syncIcon.textContent = '🔄';
+                    syncText.textContent = 'Menyinkronkan...';
+                    syncStatus.className = 'mt-4 p-3 rounded-xl bg-blue-50 text-center';
+                    syncText.className = 'text-sm text-blue-700';
+                    break;
+                case 'error':
+                    syncIcon.textContent = '❌';
+                    syncText.textContent = 'Gagal terhubung: ' + message;
+                    syncStatus.className = 'mt-4 p-3 rounded-xl bg-red-50 text-center';
+                    syncText.className = 'text-sm text-red-700';
+                    break;
+                case 'offline':
+                    syncIcon.textContent = '📴';
+                    syncText.textContent = 'Mode Offline';
+                    syncStatus.className = 'mt-4 p-3 rounded-xl bg-gray-50 text-center';
+                    syncText.className = 'text-sm text-gray-600';
+                    break;
+            }
+        }
+
+        async function syncWithFirebase() {
+            const syncBtn = document.getElementById('syncBtn');
+            const syncSpinner = document.getElementById('syncSpinner');
+            
+            // Show loading
+            syncBtn.disabled = true;
+            syncSpinner.classList.remove('hidden');
+            updateSyncStatus('syncing');
+            
+            try {
+                // Test Firestore connection
+                const testDoc = await db.collection('_test').doc('connection').get();
+                
+                // Check stores collection
+                const storesSnapshot = await db.collection('stores').get();
+                const storesCount = storesSnapshot.size;
+                
+                // Check products collection
+                const productsSnapshot = await db.collection('products').get();
+                const productsCount = productsSnapshot.size;
+                
+                // Check orders collection
+                const ordersSnapshot = await db.collection('orders').get();
+                const ordersCount = ordersSnapshot.size;
+                
+                // Check users collection
+                const usersSnapshot = await db.collection('users').get();
+                const usersCount = usersSnapshot.size;
+                
+                updateSyncStatus('connected');
+                
+                // Show sync result
+                alert(`✅ Sync Berhasil!\n\n📊 Data di Firebase:\n• 🏪 Toko: ${storesCount}\n• 📦 Produk: ${productsCount}\n• 📋 Pesanan: ${ordersCount}\n• 👥 Users: ${usersCount}\n\n☁️ Project: varsha-multi-market`);
+                
+            } catch (error) {
+                console.error('Sync error:', error);
+                updateSyncStatus('error', error.code || error.message);
+                
+                if (error.code === 'permission-denied') {
+                    alert('❌ Sync Gagal!\n\nFirestore Rules tidak mengizinkan akses.\n\nSolusi:\n1. Buka Firebase Console\n2. Firestore Database → Rules\n3. Ubah ke:\n\nrules_version = "2";\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /{document=**} {\n      allow read, write: if true;\n    }\n  }\n}');
+                } else if (error.code === 'unavailable') {
+                    alert('❌ Sync Gagal!\n\nTidak dapat terhubung ke Firebase.\n\nPeriksa:\n• Koneksi internet\n• Firewall/VPN');
+                } else {
+                    alert('❌ Sync Gagal!\n\n' + (error.message || error.code));
+                }
+            } finally {
+                syncBtn.disabled = false;
+                syncSpinner.classList.add('hidden');
             }
         }
 
@@ -750,8 +1010,26 @@
             document.getElementById('registerEmailField').classList.toggle('hidden', role !== 'seller');
         }
 
-        function formatPhoneForEmail(phone) {
-            return `${phone.replace(/\D/g, '')}@tokobuah.app`;
+        // Toggle login field berdasarkan role
+        function toggleLoginFieldByRole() {
+            const role = document.querySelector('input[name="loginRole"]:checked').value;
+            const phoneField = document.getElementById('loginPhoneField');
+            const emailField = document.getElementById('loginEmailField');
+
+            if (role === 'buyer') {
+                // Pembeli login dengan No. Telepon
+                phoneField.classList.remove('hidden');
+                emailField.classList.add('hidden');
+            } else {
+                // Penjual login dengan Email
+                emailField.classList.remove('hidden');
+                phoneField.classList.add('hidden');
+            }
+        }
+
+        function formatPhoneForEmail(phone, role = '') {
+            const cleanPhone = phone.replace(/\D/g, '');
+            return role ? `${cleanPhone}_${role}@fruitsgoods.app` : `${cleanPhone}@fruitsgoods.app`;
         }
 
         function showLoading(text = 'Memproses...') {
@@ -770,28 +1048,107 @@
         }
 
         async function handleLogin() {
-            const phone = document.getElementById('loginPhone').value.trim();
-            const password = document.getElementById('loginPassword').value;
+            const role = document.querySelector('input[name="loginRole"]:checked').value;
+            const roleText = role === 'buyer' ? 'Pembeli' : 'Penjual';
 
-            if (!phone || !password) {
-                showAuthError('No. Telepon dan password wajib diisi!');
-                return;
-            }
+            if (role === 'seller') {
+                // ============ PENJUAL: Login dengan Email ============
+                const email = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPasswordEmail').value;
+                
+                if (!email || !password) {
+                    showAuthError('Email dan password wajib diisi!');
+                    return;
+                }
 
-            showLoading('Sedang masuk...');
+                showLoading('Sedang masuk...');
 
-            try {
-                const email = formatPhoneForEmail(phone);
-                await auth.signInWithEmailAndPassword(email, password);
-            } catch (error) {
+                try {
+                    console.log('Seller login with email:', email);
+                    await auth.signInWithEmailAndPassword(email, password);
+                    console.log('Login success!');
+                    hideLoading();
+                    return;
+                } catch (e) {
+                    console.log('Login failed:', e.code);
+                    let message = 'Login gagal. ';
+                    if (e.code === 'auth/user-not-found') {
+                        message = `Email "${email}" tidak terdaftar!\n\nPastikan email sesuai dengan yang didaftarkan.`;
+                    } else if (e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') {
+                        message = `Password salah!\n\nEmail: ${email}`;
+                    } else if (e.code === 'auth/invalid-email') {
+                        message = 'Format email tidak valid!';
+                    } else if (e.code === 'auth/too-many-requests') {
+                        message = 'Terlalu banyak percobaan login. Coba lagi dalam beberapa menit.';
+                    } else if (e.code === 'auth/network-request-failed') {
+                        message = 'Gagal terhubung ke server. Periksa koneksi internet.';
+                    } else {
+                        message = `Error: ${e.code}\n${e.message}`;
+                    }
+                    showAuthError(message);
+                    hideLoading();
+                    return;
+                }
+            } else {
+                // ============ PEMBELI: Login dengan No. Telepon ============
+                const phone = document.getElementById('loginPhone').value.trim();
+                const password = document.getElementById('loginPasswordPhone').value;
+
+                if (!phone || !password) {
+                    showAuthError('No. Telepon dan password wajib diisi!');
+                    return;
+                }
+
+                showLoading('Sedang masuk...');
+
+                const cleanPhone = phone.replace(/\D/g, '');
+                
+                // Try multiple email formats for buyer
+                const emailFormats = [
+                    `${cleanPhone}_buyer@fruitsgoods.app`,
+                    `${phone}_buyer@fruitsgoods.app`,
+                    `${cleanPhone}@fruitsgoods.app`,
+                    `${phone}@fruitsgoods.app`,
+                    `${cleanPhone}_buyer@tokobuah.app`,
+                    `${cleanPhone}@tokobuah.app`
+                ];
+                
+                let lastError = null;
+                
+                for (const email of emailFormats) {
+                    try {
+                        console.log('Trying login with:', email);
+                        await auth.signInWithEmailAndPassword(email, password);
+                        console.log('Login success with:', email);
+                        hideLoading();
+                        return;
+                    } catch (e) {
+                        console.log('Failed with:', email, e.code);
+                        lastError = e;
+                        // Continue to next format if user not found
+                        if (e.code !== 'auth/user-not-found') {
+                            // If it's password error, don't try other formats
+                            break;
+                        }
+                    }
+                }
+                
+                // All formats failed
                 let message = 'Login gagal. ';
-                if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-                    message = 'No. Telepon atau password salah!';
-                } else {
-                    message += error.message;
+                if (lastError) {
+                    if (lastError.code === 'auth/user-not-found') {
+                        message = `No. Telepon ${phone} belum terdaftar sebagai Pembeli!\n\nSilakan daftar terlebih dahulu.`;
+                    } else if (lastError.code === 'auth/wrong-password' || lastError.code === 'auth/invalid-credential') {
+                        message = `Password salah!\n\nPastikan password sesuai.`;
+                    } else if (lastError.code === 'auth/too-many-requests') {
+                        message = 'Terlalu banyak percobaan login. Coba lagi dalam beberapa menit.';
+                    } else if (lastError.code === 'auth/network-request-failed') {
+                        message = 'Gagal terhubung ke server. Periksa koneksi internet.';
+                    } else {
+                        message = `Error: ${lastError.code}\n${lastError.message}`;
+                    }
                 }
                 showAuthError(message);
-            } finally {
                 hideLoading();
             }
         }
@@ -825,10 +1182,28 @@
                 return;
             }
 
-            showLoading('Mendaftarkan akun...');
+            showLoading('Memeriksa data...');
 
             try {
-                const authEmail = formatPhoneForEmail(phone);
+                // Check if phone + role already exists in Firestore
+                const cleanPhone = phone.replace(/\D/g, '');
+                const existingUsers = await db.collection('users')
+                    .where('phone', '==', phone)
+                    .where('role', '==', role)
+                    .get();
+
+                if (!existingUsers.empty) {
+                    const roleText = role === 'buyer' ? 'Pembeli' : 'Penjual';
+                    showAuthError(`No. Telepon ${phone} sudah terdaftar sebagai ${roleText}!`);
+                    hideLoading();
+                    return;
+                }
+
+                showLoading('Mendaftarkan akun...');
+
+                // Seller: gunakan email yang diinput langsung
+                // Buyer: generate email dari nomor telepon
+                const authEmail = role === 'seller' ? email : formatPhoneForEmail(phone, role);
                 const userCredential = await auth.createUserWithEmailAndPassword(authEmail, password);
                 const user = userCredential.user;
                 
@@ -842,25 +1217,31 @@
                     createdAt: Date.now()
                 });
 
-                // Create default store for seller
+                // Untuk seller, cek apakah toko utama sudah ada
+                // Jika belum, buat toko utama. Jika sudah, tidak perlu buat baru
                 if (role === 'seller') {
-                    await db.collection('stores').doc(user.uid).set({
-                        id: user.uid,
-                        name: 'Toko ' + name,
-                        address: address,
-                        phone: phone,
-                        logo: '🍎',
-                        logoImage: 'logo/VarshA_LOGO.png',
-                        bankName: '',
-                        bankAccount: '',
-                        bankAccountName: '',
-                        createdAt: Date.now()
-                    });
+                    const storeDoc = await db.collection('stores').doc(STORE_ID).get();
+                    if (!storeDoc.exists) {
+                        // Hanya create jika belum ada toko sama sekali
+                        await db.collection('stores').doc(STORE_ID).set({
+                            id: STORE_ID,
+                            name: 'Fruits & Goods',
+                            address: address,
+                            phone: phone,
+                            logo: '🛒',
+                            bankName: '',
+                            bankAccount: '',
+                            bankAccountName: '',
+                            createdAt: Date.now(),
+                            createdBy: user.uid
+                        });
+                    }
                 }
             } catch (error) {
                 let message = 'Pendaftaran gagal. ';
                 if (error.code === 'auth/email-already-in-use') {
-                    message = 'No. Telepon sudah terdaftar!';
+                    const roleText = role === 'buyer' ? 'Pembeli' : 'Penjual';
+                    message = `No. Telepon sudah terdaftar sebagai ${roleText}!`;
                 } else {
                     message += error.message;
                 }
@@ -959,22 +1340,49 @@
         }
 
         // ==================== STORE FUNCTIONS ====================
+        const STORE_ID = 'main_store'; // Single store ID untuk semua admin
+
         async function loadStoreForBuyer() {
-            // Load the first seller's store (for demo)
-            const snapshot = await db.collection('stores').limit(1).get();
-            if (!snapshot.empty) {
-                storeData = snapshot.docs[0].data();
-                document.getElementById('storeNameHeader').textContent = storeData.name || 'Fruits & Goods';
-                document.getElementById('storeNameBanner').textContent = storeData.name || 'Fruits & Goods';
-                document.getElementById('storeAddressBanner').textContent = '📍 ' + (storeData.address || 'Alamat toko');
-                document.getElementById('storePhoneBanner').textContent = '📞 ' + (storeData.phone || 'No. telepon');
+            // Load the single main store
+            const doc = await db.collection('stores').doc(STORE_ID).get();
+            if (doc.exists) {
+                storeData = doc.data();
+                
+                // Use header settings if available, fallback to store settings
+                const displayName = storeData.headerName || storeData.name || 'Fruits & Goods';
+                const tagline = storeData.tagline || '';
+                const bannerColor = storeData.bannerColor || 'green';
+                const logoEmoji = storeData.headerEmoji || storeData.logo || '🛒';
+                const logoUrl = storeData.headerLogoUrl || storeData.logoImage || '';
+                
+                // Update header
+                document.getElementById('storeNameHeader').textContent = displayName;
+                
+                // Update banner name and info
+                document.getElementById('storeNameBanner').textContent = displayName;
+                document.getElementById('storeAddressBanner').textContent = tagline ? tagline : ('📍 ' + (storeData.address || 'Alamat toko'));
+                document.getElementById('storePhoneBanner').textContent = tagline ? ('📍 ' + (storeData.address || '')) : ('📞 ' + (storeData.phone || 'No. telepon'));
+                
+                // Update banner color
+                const bannerColors = {
+                    green: 'bg-gradient-to-r from-green-500 to-green-600',
+                    orange: 'bg-gradient-to-r from-orange-500 to-orange-600',
+                    blue: 'bg-gradient-to-r from-blue-500 to-blue-600',
+                    purple: 'bg-gradient-to-r from-purple-500 to-purple-600',
+                    red: 'bg-gradient-to-r from-red-500 to-red-600',
+                    pink: 'bg-gradient-to-r from-pink-500 to-pink-600',
+                    teal: 'bg-gradient-to-r from-teal-500 to-teal-600',
+                    gray: 'bg-gradient-to-r from-gray-700 to-gray-800'
+                };
+                const bannerEl = document.getElementById('storeInfoBanner');
+                bannerEl.className = `${bannerColors[bannerColor] || bannerColors.green} text-white py-4 px-4`;
                 
                 // Update logo banner - support image or emoji
                 const logoBanner = document.getElementById('storeLogoBanner');
-                if (storeData.logoImage) {
-                    logoBanner.innerHTML = `<img src="${storeData.logoImage}" alt="Logo" class="w-full h-full object-cover rounded-full" onerror="this.outerHTML='${storeData.logo || 'logo/VarshA_LOGO.png'}'">`;
+                if (logoUrl) {
+                    logoBanner.innerHTML = `<img src="${logoUrl}" alt="Logo" class="w-full h-full object-cover rounded-full" onerror="this.outerHTML='${logoEmoji}'">`;
                 } else {
-                    logoBanner.textContent = storeData.logo || 'c:\Users\DELL\Downloads\VarshA_LOGO_only (1).ico';
+                    logoBanner.textContent = logoEmoji;
                 }
             }
         }
@@ -982,26 +1390,89 @@
         async function loadStoreSettings() {
             if (!currentUser) return;
             
-            const doc = await db.collection('stores').doc(currentUser.uid).get();
-            if (doc.exists) {
-                storeData = doc.data();
-                document.getElementById('storeName').value = storeData.name || '';
-                document.getElementById('storeAddress').value = storeData.address || '';
-                document.getElementById('storePhone').value = storeData.phone || '';
-                document.getElementById('storeLogo').value = storeData.logo || '🍎';
-                document.getElementById('storeLogoImage').value = storeData.logoImage || '';
-                document.getElementById('bankName').value = storeData.bankName || '';
-                document.getElementById('bankAccount').value = storeData.bankAccount || '';
-                document.getElementById('bankAccountName').value = storeData.bankAccountName || '';
-                updateStoreLogoPreview();
+            try {
+                // Load single main store (shared by all admins)
+                let doc = await db.collection('stores').doc(STORE_ID).get();
+                
+                // Jika main_store tidak ada, cari dokumen lain dan migrasi
+                if (!doc.exists) {
+                    console.log('main_store tidak ditemukan, mencari dokumen lain...');
+                    const allStores = await db.collection('stores').limit(1).get();
+                    
+                    if (!allStores.empty) {
+                        const existingStore = allStores.docs[0];
+                        console.log('Ditemukan store dengan ID:', existingStore.id);
+                        
+                        // Migrasi data ke main_store
+                        const existingData = existingStore.data();
+                        await db.collection('stores').doc(STORE_ID).set({
+                            ...existingData,
+                            id: STORE_ID,
+                            migratedFrom: existingStore.id,
+                            migratedAt: Date.now()
+                        });
+                        
+                        // Load ulang dari main_store
+                        doc = await db.collection('stores').doc(STORE_ID).get();
+                        console.log('Data berhasil dimigrasi ke main_store');
+                    }
+                }
+                
+                if (doc.exists) {
+                    storeData = doc.data();
+                    console.log('Store data loaded:', storeData);
+                    
+                    // Populate form fields
+                    document.getElementById('storeName').value = storeData.name || '';
+                    document.getElementById('storeAddress').value = storeData.address || '';
+                    document.getElementById('storePhone').value = storeData.phone || '';
+                    document.getElementById('storeLogo').value = storeData.logo || '🍎';
+                    document.getElementById('storeLogoImage').value = storeData.logoImage || '';
+                    document.getElementById('bankName').value = storeData.bankName || '';
+                    document.getElementById('bankAccount').value = storeData.bankAccount || '';
+                    document.getElementById('bankAccountName').value = storeData.bankAccountName || '';
+                    
+                    // Update preview
+                    updateStoreLogoPreview();
+                    
+                    // Also load header settings if on header tab
+                    if (storeData.headerName) {
+                        document.getElementById('headerStoreName').value = storeData.headerName || storeData.name || '';
+                        document.getElementById('headerTagline').value = storeData.tagline || '';
+                        document.getElementById('headerEmoji').value = storeData.headerEmoji || storeData.logo || '🛒';
+                        document.getElementById('headerLogoUrl').value = storeData.headerLogoUrl || '';
+                        
+                        // Set banner color radio
+                        const bannerColor = storeData.bannerColor || 'green';
+                        const colorRadio = document.querySelector(`input[name="bannerColor"][value="${bannerColor}"]`);
+                        if (colorRadio) colorRadio.checked = true;
+                        
+                        updateHeaderPreview();
+                    }
+                } else {
+                    console.log('No store found, using defaults');
+                    storeData = null;
+                    // Set default values
+                    document.getElementById('storeName').value = '';
+                    document.getElementById('storeAddress').value = '';
+                    document.getElementById('storePhone').value = '';
+                    document.getElementById('storeLogo').value = '🍎';
+                    document.getElementById('storeLogoImage').value = '';
+                    document.getElementById('bankName').value = '';
+                    document.getElementById('bankAccount').value = '';
+                    document.getElementById('bankAccountName').value = '';
+                    updateStoreLogoPreview();
+                }
+            } catch (error) {
+                console.error('Error loading store settings:', error);
             }
         }
 
         function updateStoreLogoPreview() {
-            const emoji = document.getElementById('storeLogo').value.trim() || 'logo/VarshA_LOGO.png';
-            const imageUrl = document.getElementById('storeLogoImage').value.trim() || 'logo/VarshA_LOGO.png';
+            const emoji = document.getElementById('storeLogo').value.trim() || '🍎';
+            const imageUrl = document.getElementById('storeLogoImage').value.trim();
             const previewEl = document.getElementById('storeLogoPreview');
-
+            
             if (imageUrl) {
                 previewEl.innerHTML = `<img src="${imageUrl}" alt="Logo" class="w-full h-full object-cover" onerror="this.outerHTML='<span class=\\'text-5xl\\'>${emoji}</span>'">`;
             } else {
@@ -1009,31 +1480,113 @@
             }
         }
 
+        async function restoreStoreFromFirebase() {
+            if (!db) {
+                alert('❌ Tidak terhubung ke Firebase!');
+                return;
+            }
+
+            const spinner = document.getElementById('restoreSpinner');
+            spinner?.classList.remove('hidden');
+
+            try {
+                // Coba load dari main_store dulu
+                let doc = await db.collection('stores').doc(STORE_ID).get();
+                
+                // Jika main_store tidak ada, cari dokumen lain di collection stores
+                if (!doc.exists) {
+                    console.log('main_store tidak ditemukan, mencari dokumen lain...');
+                    const allStores = await db.collection('stores').limit(1).get();
+                    
+                    if (!allStores.empty) {
+                        const existingStore = allStores.docs[0];
+                        console.log('Ditemukan store dengan ID:', existingStore.id);
+                        
+                        // Migrasi data ke main_store
+                        const existingData = existingStore.data();
+                        await db.collection('stores').doc(STORE_ID).set({
+                            ...existingData,
+                            id: STORE_ID,
+                            migratedFrom: existingStore.id,
+                            migratedAt: Date.now()
+                        });
+                        
+                        // Load ulang dari main_store
+                        doc = await db.collection('stores').doc(STORE_ID).get();
+                        console.log('Data berhasil dimigrasi ke main_store');
+                    }
+                }
+                
+                if (doc.exists) {
+                    storeData = doc.data();
+                    console.log('Store data loaded:', storeData);
+                    
+                    // Populate form
+                    document.getElementById('storeName').value = storeData.name || '';
+                    document.getElementById('storeAddress').value = storeData.address || '';
+                    document.getElementById('storePhone').value = storeData.phone || '';
+                    document.getElementById('storeLogo').value = storeData.logo || '🍎';
+                    document.getElementById('storeLogoImage').value = storeData.logoImage || '';
+                    document.getElementById('bankName').value = storeData.bankName || '';
+                    document.getElementById('bankAccount').value = storeData.bankAccount || '';
+                    document.getElementById('bankAccountName').value = storeData.bankAccountName || '';
+                    
+                    updateStoreLogoPreview();
+                    
+                    alert('✅ Data toko berhasil di-restore dari Firebase!');
+                } else {
+                    alert('⚠️ Belum ada data toko di Firebase. Silakan isi dan simpan terlebih dahulu.');
+                }
+            } catch (error) {
+                console.error('Restore error:', error);
+                alert('❌ Gagal restore: ' + error.message);
+            } finally {
+                spinner?.classList.add('hidden');
+            }
+        }
+
         async function saveStoreSettings() {
             if (!currentUser) return;
 
-            showLoading('Menyimpan...');
+            // Cek apakah toko sudah ada di Firebase
+            try {
+                const doc = await db.collection('stores').doc(STORE_ID).get();
+                
+                if (!doc.exists) {
+                    alert('⚠️ Toko belum ada di Firebase. Hubungi administrator untuk membuat toko.');
+                    return;
+                }
+            } catch (error) {
+                alert('❌ Gagal mengecek data toko: ' + error.message);
+                return;
+            }
+
+            showLoading('Menyimpan perubahan...');
 
             try {
-                const data = {
-                    id: currentUser.uid,
+                const updateData = {
                     name: document.getElementById('storeName').value.trim(),
                     address: document.getElementById('storeAddress').value.trim(),
                     phone: document.getElementById('storePhone').value.trim(),
                     logo: document.getElementById('storeLogo').value.trim() || '🍎',
-                    logoImage: document.getElementById('storeLogoImage').value.trim() || 'logo/VarshA_LOGO.png',
+                    logoImage: document.getElementById('storeLogoImage').value.trim(),
                     bankName: document.getElementById('bankName').value,
                     bankAccount: document.getElementById('bankAccount').value.trim(),
                     bankAccountName: document.getElementById('bankAccountName').value.trim(),
-                    updatedAt: Date.now()
+                    updatedAt: Date.now(),
+                    updatedBy: currentUser.uid
                 };
 
-                // Use set with merge to create if not exists or update if exists
-                await db.collection('stores').doc(currentUser.uid).set(data, { merge: true });
-                storeData = { ...storeData, ...data };
+                // Hanya update, tidak create baru
+                await db.collection('stores').doc(STORE_ID).update(updateData);
+                storeData = { ...storeData, ...updateData };
                 alert('✅ Pengaturan toko berhasil disimpan!');
             } catch (error) {
-                alert('❌ Gagal menyimpan: ' + error.message);
+                if (error.code === 'not-found') {
+                    alert('⚠️ Toko tidak ditemukan. Hubungi administrator.');
+                } else {
+                    alert('❌ Gagal menyimpan: ' + error.message);
+                }
             } finally {
                 hideLoading();
             }
@@ -1045,9 +1598,8 @@
 
             if (unsubscribeProducts) unsubscribeProducts();
 
-            // Simplified query without orderBy to avoid index requirement
+            // Load all products (shared by all admins) - tidak filter by sellerId
             unsubscribeProducts = db.collection('products')
-                .where('sellerId', '==', currentUser.uid)
                 .onSnapshot(snapshot => {
                     productsCache = snapshot.docs.map(doc => doc.data());
                     // Sort by createdAt in memory
@@ -1244,7 +1796,8 @@
                     const id = 'P' + Date.now().toString(36).toUpperCase();
                     await db.collection('products').doc(id).set({
                         id,
-                        sellerId: currentUser.uid,
+                        storeId: STORE_ID, // Semua produk milik single store
+                        createdBy: currentUser.uid,
                         ...productData,
                         createdAt: Date.now()
                     });
@@ -1274,15 +1827,260 @@
             }
         }
 
+        // Sample products data
+        const sampleProducts = [
+            { emoji: '🍎', name: 'Apel Fuji Premium', price: 35000, unit: 'kg', stock: 50, description: 'Apel manis dan renyah dari Jepang', image: 'https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=300' },
+            { emoji: '🍊', name: 'Jeruk Sunkist', price: 28000, unit: 'kg', stock: 80, description: 'Jeruk manis segar tanpa biji', image: 'https://images.unsplash.com/photo-1547514701-42782101795e?w=300' },
+            { emoji: '🍇', name: 'Anggur Merah Import', price: 55000, unit: 'kg', stock: 30, description: 'Anggur merah manis dari Chile', image: 'https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=300' },
+            { emoji: '🍌', name: 'Pisang Cavendish', price: 18000, unit: 'sisir', stock: 100, description: 'Pisang premium kualitas ekspor', image: 'https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=300' },
+            { emoji: '🍉', name: 'Semangka Merah', price: 25000, unit: 'buah', stock: 40, description: 'Semangka manis dan segar', image: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=300' },
+            { emoji: '🥭', name: 'Mangga Harum Manis', price: 32000, unit: 'kg', stock: 60, description: 'Mangga lokal super manis', image: 'https://images.unsplash.com/photo-1553279768-865429fa0078?w=300' },
+            { emoji: '🍓', name: 'Strawberry Fresh', price: 45000, unit: 'pack', stock: 25, description: 'Strawberry segar dari Bandung', image: 'https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=300' },
+            { emoji: '🐉', name: 'Buah Naga Merah', price: 28000, unit: 'kg', stock: 45, description: 'Buah naga merah organik', image: 'https://images.unsplash.com/photo-1527325678964-54921661f888?w=300' },
+            { emoji: '🍍', name: 'Nanas Madu', price: 15000, unit: 'buah', stock: 70, description: 'Nanas manis tanpa serat kasar', image: 'https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=300' },
+            { emoji: '🥝', name: 'Kiwi Green', price: 48000, unit: 'pack', stock: 20, description: 'Kiwi hijau segar dari New Zealand', image: 'https://images.unsplash.com/photo-1585059895524-72359e06133a?w=300' },
+            { emoji: '🍐', name: 'Pir Xiang Lie', price: 38000, unit: 'kg', stock: 35, description: 'Pir manis dan berair dari China', image: 'https://images.unsplash.com/photo-1514756331096-242fdeb70d4a?w=300' },
+            { emoji: '🫐', name: 'Blueberry Import', price: 65000, unit: 'pack', stock: 15, description: 'Blueberry segar kaya antioksidan', image: 'https://images.unsplash.com/photo-1498557850523-fd3d118b962e?w=300' },
+            { emoji: '🍋', name: 'Lemon California', price: 35000, unit: 'kg', stock: 40, description: 'Lemon segar untuk minuman & masakan', image: 'https://images.unsplash.com/photo-1590502593747-42a996133562?w=300' },
+            { emoji: '🥑', name: 'Alpukat Mentega', price: 30000, unit: 'kg', stock: 55, description: 'Alpukat lembut untuk smoothie', image: 'https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=300' },
+            { emoji: '🍈', name: 'Melon Hijau', price: 22000, unit: 'buah', stock: 50, description: 'Melon manis dan menyegarkan', image: 'https://images.unsplash.com/photo-1571575173700-afb9492e6a50?w=300' },
+            { emoji: '🥥', name: 'Kelapa Muda', price: 12000, unit: 'buah', stock: 90, description: 'Kelapa muda segar untuk es kelapa', image: 'https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=300' },
+            { emoji: '🍒', name: 'Cherry Import', price: 120000, unit: 'pack', stock: 10, description: 'Cherry merah premium dari USA', image: 'https://images.unsplash.com/photo-1528821128474-27f963b062bf?w=300' },
+            { emoji: '🍑', name: 'Peach Korea', price: 58000, unit: 'kg', stock: 20, description: 'Buah persik manis dari Korea', image: 'https://images.unsplash.com/photo-1629226182678-73793c267728?w=300' },
+            { emoji: '🍏', name: 'Apel Hijau Granny', price: 40000, unit: 'kg', stock: 45, description: 'Apel hijau segar asam manis', image: 'https://images.unsplash.com/photo-1569870499705-504209102861?w=300' },
+            { emoji: '🍊', name: 'Jeruk Mandarin', price: 45000, unit: 'kg', stock: 35, description: 'Jeruk kecil manis tanpa biji', image: 'https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?w=300' }
+        ];
+
+        async function addSampleProducts() {
+            if (!currentUser) return;
+
+            const confirmAdd = confirm(`Tambahkan ${sampleProducts.length} produk sample buah?\n\nProduk akan ditambahkan ke katalog toko Anda.`);
+            if (!confirmAdd) return;
+
+            showLoading('Menambahkan produk sample...');
+
+            try {
+                const batch = db.batch();
+                let addedCount = 0;
+
+                for (const product of sampleProducts) {
+                    const id = 'P' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 5).toUpperCase();
+                    const docRef = db.collection('products').doc(id);
+                    
+                    batch.set(docRef, {
+                        id,
+                        storeId: STORE_ID,
+                        createdBy: currentUser.uid,
+                        emoji: product.emoji,
+                        name: product.name,
+                        price: product.price,
+                        unit: product.unit,
+                        stock: product.stock,
+                        description: product.description,
+                        image: product.image || '',
+                        active: true,
+                        createdAt: Date.now() + addedCount,
+                        updatedAt: Date.now()
+                    });
+                    addedCount++;
+
+                    // Batch commit setiap 10 produk (Firestore limit 500 per batch)
+                    if (addedCount % 10 === 0) {
+                        await batch.commit();
+                    }
+                }
+
+                // Commit sisa produk
+                await batch.commit();
+
+                alert(`✅ Berhasil menambahkan ${addedCount} produk sample!\n\n🍎🍊🍇🍌🍉🥭🍓🍍🥝🍐`);
+            } catch (error) {
+                console.error('Error adding sample products:', error);
+                alert('❌ Gagal menambahkan produk: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
         // ==================== SELLER TABS ====================
         function switchSellerTab(tab) {
             document.getElementById('ordersTab').classList.toggle('hidden', tab !== 'orders');
             document.getElementById('productsTab').classList.toggle('hidden', tab !== 'products');
             document.getElementById('storeTab').classList.toggle('hidden', tab !== 'store');
+            document.getElementById('headerTab').classList.toggle('hidden', tab !== 'header');
 
             document.getElementById('tabOrders').classList.toggle('tab-active', tab === 'orders');
             document.getElementById('tabProducts').classList.toggle('tab-active', tab === 'products');
             document.getElementById('tabStore').classList.toggle('tab-active', tab === 'store');
+            document.getElementById('tabHeader').classList.toggle('tab-active', tab === 'header');
+
+            // Load data when switching tabs
+            if (tab === 'store') {
+                loadStoreSettings();
+            } else if (tab === 'header') {
+                loadHeaderSettings();
+            }
+        }
+
+        // ==================== HEADER SETTINGS ====================
+        const bannerColors = {
+            green: 'bg-gradient-to-r from-green-500 to-green-600',
+            orange: 'bg-gradient-to-r from-orange-500 to-orange-600',
+            blue: 'bg-gradient-to-r from-blue-500 to-blue-600',
+            purple: 'bg-gradient-to-r from-purple-500 to-purple-600',
+            red: 'bg-gradient-to-r from-red-500 to-red-600',
+            pink: 'bg-gradient-to-r from-pink-500 to-pink-600',
+            teal: 'bg-gradient-to-r from-teal-500 to-teal-600',
+            gray: 'bg-gradient-to-r from-gray-700 to-gray-800'
+        };
+
+        async function loadHeaderSettings() {
+            try {
+                // Always reload from Firestore to get latest data
+                const doc = await db.collection('stores').doc(STORE_ID).get();
+                if (doc.exists) {
+                    storeData = doc.data();
+                    console.log('Header data loaded:', storeData);
+                }
+                
+                if (!storeData) {
+                    // Set defaults if no store data
+                    document.getElementById('headerStoreName').value = 'Fruits & Goods';
+                    document.getElementById('headerTagline').value = 'Fresh fruits & more';
+                    document.getElementById('headerEmoji').value = '🛒';
+                    document.getElementById('headerLogoUrl').value = '';
+                    updateHeaderPreview();
+                    return;
+                }
+                
+                document.getElementById('headerStoreName').value = storeData.headerName || storeData.name || 'Fruits & Goods';
+                document.getElementById('headerTagline').value = storeData.tagline || 'Fresh fruits & more';
+                document.getElementById('headerEmoji').value = storeData.headerEmoji || storeData.logo || '🛒';
+                document.getElementById('headerLogoUrl').value = storeData.headerLogoUrl || storeData.logoImage || '';
+                
+                // Set banner color
+                const color = storeData.bannerColor || 'green';
+                const colorRadio = document.querySelector(`input[name="bannerColor"][value="${color}"]`);
+                if (colorRadio) colorRadio.checked = true;
+                
+                updateHeaderPreview();
+            } catch (error) {
+                console.error('Error loading header settings:', error);
+            }
+        }
+
+        function updateHeaderPreview() {
+            const storeName = document.getElementById('headerStoreName').value.trim() || 'Fruits & Goods';
+            const tagline = document.getElementById('headerTagline').value.trim() || 'Fresh fruits & more';
+            const emoji = document.getElementById('headerEmoji').value.trim() || '🛒';
+            const logoUrl = document.getElementById('headerLogoUrl').value.trim();
+            const color = document.querySelector('input[name="bannerColor"]:checked')?.value || 'green';
+
+            // Update preview
+            document.getElementById('previewStoreName').textContent = storeName;
+            document.getElementById('previewTagline').textContent = tagline;
+            
+            const previewBanner = document.getElementById('previewBanner');
+            previewBanner.className = `${bannerColors[color]} text-white py-4 px-4`;
+            
+            const previewLogo = document.getElementById('previewLogo');
+            if (logoUrl) {
+                previewLogo.innerHTML = `<img src="${logoUrl}" alt="Logo" class="w-full h-full object-cover" onerror="this.outerHTML='${emoji}'">`;
+            } else {
+                previewLogo.textContent = emoji;
+            }
+        }
+
+        async function restoreHeaderFromFirebase() {
+            if (!db) {
+                alert('❌ Tidak terhubung ke Firebase!');
+                return;
+            }
+
+            showLoading('Memuat data header...');
+
+            try {
+                const doc = await db.collection('stores').doc(STORE_ID).get();
+                if (doc.exists) {
+                    storeData = doc.data();
+                    
+                    document.getElementById('headerStoreName').value = storeData.headerName || storeData.name || 'Fruits & Goods';
+                    document.getElementById('headerTagline').value = storeData.tagline || 'Fresh fruits & more';
+                    document.getElementById('headerEmoji').value = storeData.headerEmoji || storeData.logo || '🛒';
+                    document.getElementById('headerLogoUrl').value = storeData.headerLogoUrl || storeData.logoImage || '';
+                    
+                    // Set banner color
+                    const color = storeData.bannerColor || 'green';
+                    const colorRadio = document.querySelector(`input[name="bannerColor"][value="${color}"]`);
+                    if (colorRadio) colorRadio.checked = true;
+                    
+                    updateHeaderPreview();
+                    
+                    alert('✅ Data header berhasil di-restore dari Firebase!');
+                } else {
+                    alert('⚠️ Belum ada data toko di Firebase.');
+                }
+            } catch (error) {
+                alert('❌ Gagal restore: ' + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function saveHeaderSettings() {
+            if (!currentUser) return;
+
+            // Cek apakah toko sudah ada
+            try {
+                const doc = await db.collection('stores').doc(STORE_ID).get();
+                if (!doc.exists) {
+                    alert('⚠️ Toko belum ada di Firebase. Hubungi administrator untuk membuat toko.');
+                    return;
+                }
+            } catch (error) {
+                alert('❌ Gagal mengecek data toko: ' + error.message);
+                return;
+            }
+
+            const headerName = document.getElementById('headerStoreName').value.trim() || 'Fruits & Goods';
+            const tagline = document.getElementById('headerTagline').value.trim() || 'Fresh fruits & more';
+            const headerEmoji = document.getElementById('headerEmoji').value.trim() || '🛒';
+            const headerLogoUrl = document.getElementById('headerLogoUrl').value.trim();
+            const bannerColor = document.querySelector('input[name="bannerColor"]:checked')?.value || 'green';
+
+            showLoading('Menyimpan header...');
+
+            try {
+                // Hanya update, tidak create baru
+                await db.collection('stores').doc(STORE_ID).update({
+                    headerName,
+                    tagline,
+                    headerEmoji,
+                    headerLogoUrl,
+                    bannerColor,
+                    updatedAt: Date.now(),
+                    updatedBy: currentUser.uid
+                });
+
+                storeData = { 
+                    ...storeData, 
+                    headerName, 
+                    tagline, 
+                    headerEmoji, 
+                    headerLogoUrl, 
+                    bannerColor 
+                };
+
+                alert('✅ Header berhasil disimpan!');
+            } catch (error) {
+                if (error.code === 'not-found') {
+                    alert('⚠️ Toko tidak ditemukan. Hubungi administrator.');
+                } else {
+                    alert('❌ Gagal menyimpan: ' + error.message);
+                }
+            } finally {
+                hideLoading();
+            }
         }
 
         // ==================== CART FUNCTIONS ====================
