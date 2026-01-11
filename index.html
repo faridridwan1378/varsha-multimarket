@@ -1087,7 +1087,7 @@
 
             try {
                 const data = {
-                    id: currentUser.uid,
+                    id: 'MAIN_STORE',
                     name: document.getElementById('storeName').value.trim(),
                     address: document.getElementById('storeAddress').value.trim(),
                     phone: document.getElementById('storePhone').value.trim(),
@@ -1100,7 +1100,7 @@
                 };
 
                 // Use set with merge to create if not exists or update if exists
-                await db.collection('stores').doc(currentUser.uid).set(data, { merge: true });
+                await db.collection('stores').doc('MAIN_STORE').set(data, { merge: true });
                 storeData = { ...storeData, ...data };
                 alert('✅ Pengaturan toko berhasil disimpan!');
             } catch (error) {
