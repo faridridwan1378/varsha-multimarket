@@ -1026,11 +1026,8 @@
                 } else {
                     logoBanner.textContent = storeData.logo || '🍎';
                 }
-            } else {
-                // Create default store if it doesn't exist
-                await createDefaultStore();
-                await loadStoreForBuyer();
             }
+            // If store doesn't exist, don't create default - let admin create it through settings
         }
 
         async function createDefaultStore() {
