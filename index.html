@@ -3041,6 +3041,100 @@ ${itemsList}
             openWhatsApp(storeData?.phone, waMessage);
         }
 
+        // ==================== PASSWORD CHANGE ====================
+        function openPasswordChangeModal() {
+            document.getElementById('passwordChangeModal').classList.remove('hidden');
+            document.getElementById('passwordChangeModal').classList.add('flex');
+            document.getElementById('passwordChangeError').classList.add('hidden');
+            // Clear form
+            document.getElementById('oldPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmNewPassword').value = '';
+        }
+
+        function closePasswordChangeModal() {
+            document.getElementById('passwordChangeModal').classList.add('hidden');
+            document.getElementById('passwordChangeModal').classList.remove('flex');
+        }
+
+        async function changePassword() {
+            const oldPassword = document.getElementById('oldPassword').value.trim();
+            const newPassword = document.getElementById('newPassword').value.trim();
+            const confirmPassword = document.getElementById('confirmNewPassword').value.trim();
+            const errorEl = document.getElementById('passwordChangeError');
+
+            // Clear previous error
+            errorEl.classList.add('hidden');
+
+            // Validation
+            if (!oldPassword || !newPassword || !confirmPassword) {
+                errorEl.textContent = 'Semua field harus diisi!';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                errorEl.textContent = 'Password baru minimal 6 karakter!';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            if (newPassword !== confirmPassword) {
+                errorEl.textContent = 'Password baru dan konfirmasi tidak cocok!';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            if (oldPassword === newPassword) {
+                errorEl.textContent = 'Password baru tidak boleh sama dengan password lama!';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+
+            showLoading('Mengubah password...');
+
+            try {
+                // Re-authenticate user with old password
+                const user = auth.currentUser;
+                const credential = firebase.auth.EmailAuthProvider.credential(
+                    user.email,
+                    oldPassword
+                );
+
+                await user.reauthenticateWithCredential(credential);
+
+                // Update password
+                await user.updatePassword(newPassword);
+
+                closePasswordChangeModal();
+                alert('✅ Password berhasil diubah!\n\nSilakan login kembali dengan password baru.');
+
+                // Logout user after password change for security
+                await auth.signOut();
+
+            } catch (error) {
+                console.error('Password change error:', error);
+
+                let message = 'Gagal mengubah password. ';
+                if (error.code === 'auth/wrong-password') {
+                    message = 'Password lama salah!';
+                } else if (error.code === 'auth/weak-password') {
+                    message = 'Password baru terlalu lemah!';
+                } else if (error.code === 'auth/requires-recent-login') {
+                    message = 'Sesi login telah kedaluwarsa. Silakan login ulang.';
+                } else if (error.code === 'auth/network-request-failed') {
+                    message = 'Gagal terhubung ke server. Periksa koneksi internet.';
+                } else {
+                    message += error.message;
+                }
+
+                errorEl.textContent = message;
+                errorEl.classList.remove('hidden');
+            } finally {
+                hideLoading();
+            }
+        }
+
         // Initialize
         initFirebase();
     </script>
