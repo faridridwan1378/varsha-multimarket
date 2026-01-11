@@ -70,7 +70,7 @@
     <div id="authModal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-[90] p-4 hidden">
         <div class="bg-white rounded-2xl p-6 max-w-md w-full fade-in max-h-[90vh] overflow-y-auto">
             <div class="text-center mb-6">
-                <img src="logo/VarshA_LOGO.png" alt="Logo" class="w-20 h-20 object-cover rounded-full mx-auto mb-2">
+                <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center text-5xl mx-auto mb-2 overflow-hidden" id="authLogo">🍎</div>
                 <h2 class="text-2xl font-bold text-green-600">Fruits & Goods</h2>
                 <p class="text-gray-500 text-sm">Selamat datang!</p>
             </div>
@@ -82,10 +82,34 @@
 
             <!-- Login Form -->
             <div id="loginForm">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Masuk Sebagai</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="loginRole" value="buyer" class="hidden peer" checked onchange="toggleLoginFields()">
+                            <div class="border-2 border-gray-200 rounded-xl p-4 text-center peer-checked:border-orange-500 peer-checked:bg-orange-50 transition">
+                                <span class="text-3xl block mb-1">🛒</span>
+                                <span class="font-medium text-gray-700">Pembeli</span>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="loginRole" value="seller" class="hidden peer" onchange="toggleLoginFields()">
+                            <div class="border-2 border-gray-200 rounded-xl p-4 text-center peer-checked:border-green-500 peer-checked:bg-green-50 transition">
+                                <span class="text-3xl block mb-1">👨‍💼</span>
+                                <span class="font-medium text-gray-700">Penjual</span>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="space-y-4">
-                    <div>
+                    <div id="loginPhoneField">
                         <label class="block text-sm font-medium text-gray-700 mb-1">📱 No. Telepon</label>
                         <input type="tel" id="loginPhone" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-green-500 focus:outline-none" placeholder="08123456789">
+                    </div>
+                    <div id="loginEmailField" class="hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">📧 Email</label>
+                        <input type="email" id="loginEmail" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-green-500 focus:outline-none" placeholder="email@contoh.com">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">🔒 Password</label>
@@ -213,7 +237,7 @@
         <!-- Store Info Banner -->
         <div id="storeInfoBanner" class="bg-gradient-to-r from-green-500 to-green-600 text-white py-4 px-4">
             <div class="container mx-auto flex items-center gap-4">
-                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-3xl overflow-hidden" id="storeLogoBanner"><img src="logo/VarshA_LOGO.png" alt="Logo" class="w-full h-full object-cover rounded-full"></div>
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center text-3xl overflow-hidden" id="storeLogoBanner">🍎</div>
                 <div>
                     <h2 class="text-xl font-bold" id="storeNameBanner">Fruits & Goods</h2>
                     <p class="text-sm opacity-90" id="storeAddressBanner">📍 Alamat toko</p>
@@ -750,6 +774,12 @@
             document.getElementById('registerEmailField').classList.toggle('hidden', role !== 'seller');
         }
 
+        function toggleLoginFields() {
+            const role = document.querySelector('input[name="loginRole"]:checked').value;
+            document.getElementById('loginPhoneField').classList.toggle('hidden', role === 'seller');
+            document.getElementById('loginEmailField').classList.toggle('hidden', role !== 'seller');
+        }
+
         function formatPhoneForEmail(phone) {
             return `${phone.replace(/\D/g, '')}@tokobuah.app`;
         }
@@ -770,23 +800,47 @@
         }
 
         async function handleLogin() {
-            const phone = document.getElementById('loginPhone').value.trim();
+            const role = document.querySelector('input[name="loginRole"]:checked').value;
             const password = document.getElementById('loginPassword').value;
 
-            if (!phone || !password) {
-                showAuthError('No. Telepon dan password wajib diisi!');
+            let credential = '';
+            let credentialLabel = '';
+
+            if (role === 'buyer') {
+                credential = document.getElementById('loginPhone').value.trim();
+                credentialLabel = 'No. Telepon';
+                if (!credential) {
+                    showAuthError('No. Telepon dan password wajib diisi!');
+                    return;
+                }
+            } else {
+                credential = document.getElementById('loginEmail').value.trim();
+                credentialLabel = 'Email';
+                if (!credential) {
+                    showAuthError('Email dan password wajib diisi!');
+                    return;
+                }
+            }
+
+            if (!password) {
+                showAuthError('Password wajib diisi!');
                 return;
             }
 
             showLoading('Sedang masuk...');
 
             try {
-                const email = formatPhoneForEmail(phone);
-                await auth.signInWithEmailAndPassword(email, password);
+                let authEmail = '';
+                if (role === 'buyer') {
+                    authEmail = formatPhoneForEmail(credential);
+                } else {
+                    authEmail = credential;
+                }
+                await auth.signInWithEmailAndPassword(authEmail, password);
             } catch (error) {
                 let message = 'Login gagal. ';
                 if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-credential') {
-                    message = 'No. Telepon atau password salah!';
+                    message = `${credentialLabel} atau password salah!`;
                 } else {
                     message += error.message;
                 }
@@ -828,10 +882,13 @@
             showLoading('Mendaftarkan akun...');
 
             try {
-                const authEmail = formatPhoneForEmail(phone);
+                let authEmail = formatPhoneForEmail(phone);
+                if (role === 'seller') {
+                    authEmail = email;
+                }
                 const userCredential = await auth.createUserWithEmailAndPassword(authEmail, password);
                 const user = userCredential.user;
-                
+
                 await db.collection('users').doc(user.uid).set({
                     id: user.uid,
                     name: name,
@@ -841,22 +898,6 @@
                     role: role,
                     createdAt: Date.now()
                 });
-
-                // Create default store for seller
-                if (role === 'seller') {
-                    await db.collection('stores').doc(user.uid).set({
-                        id: user.uid,
-                        name: 'Toko ' + name,
-                        address: address,
-                        phone: phone,
-                        logo: '🍎',
-                        logoImage: 'logo/VarshA_LOGO.png',
-                        bankName: '',
-                        bankAccount: '',
-                        bankAccountName: '',
-                        createdAt: Date.now()
-                    });
-                }
             } catch (error) {
                 let message = 'Pendaftaran gagal. ';
                 if (error.code === 'auth/email-already-in-use') {
@@ -960,29 +1001,49 @@
 
         // ==================== STORE FUNCTIONS ====================
         async function loadStoreForBuyer() {
-            // Load the first seller's store (for demo)
-            const snapshot = await db.collection('stores').limit(1).get();
-            if (!snapshot.empty) {
-                storeData = snapshot.docs[0].data();
+            // Load the single shared store
+            const doc = await db.collection('stores').doc('MAIN_STORE').get();
+            if (doc.exists) {
+                storeData = doc.data();
                 document.getElementById('storeNameHeader').textContent = storeData.name || 'Fruits & Goods';
                 document.getElementById('storeNameBanner').textContent = storeData.name || 'Fruits & Goods';
                 document.getElementById('storeAddressBanner').textContent = '📍 ' + (storeData.address || 'Alamat toko');
                 document.getElementById('storePhoneBanner').textContent = '📞 ' + (storeData.phone || 'No. telepon');
-                
+
                 // Update logo banner - support image or emoji
                 const logoBanner = document.getElementById('storeLogoBanner');
                 if (storeData.logoImage) {
-                    logoBanner.innerHTML = `<img src="${storeData.logoImage}" alt="Logo" class="w-full h-full object-cover rounded-full" onerror="this.outerHTML='${storeData.logo || 'logo/VarshA_LOGO.png'}'">`;
+                    logoBanner.innerHTML = `<img src="${storeData.logoImage}" alt="Logo" class="w-full h-full object-cover rounded-full" onerror="this.outerHTML='${storeData.logo || '🍎'}'">`;
                 } else {
-                    logoBanner.textContent = storeData.logo || 'c:\Users\DELL\Downloads\VarshA_LOGO_only (1).ico';
+                    logoBanner.textContent = storeData.logo || '🍎';
                 }
+            } else {
+                // Create default store if it doesn't exist
+                await createDefaultStore();
+                await loadStoreForBuyer();
             }
+        }
+
+        async function createDefaultStore() {
+            const defaultStore = {
+                id: 'MAIN_STORE',
+                name: 'Fruits & Goods',
+                address: 'Alamat Toko',
+                phone: '08123456789',
+                logo: '🍎',
+                logoImage: '',
+                bankName: '',
+                bankAccount: '',
+                bankAccountName: '',
+                createdAt: Date.now()
+            };
+            await db.collection('stores').doc('MAIN_STORE').set(defaultStore);
         }
 
         async function loadStoreSettings() {
             if (!currentUser) return;
-            
-            const doc = await db.collection('stores').doc(currentUser.uid).get();
+
+            const doc = await db.collection('stores').doc('MAIN_STORE').get();
             if (doc.exists) {
                 storeData = doc.data();
                 document.getElementById('storeName').value = storeData.name || '';
@@ -994,12 +1055,16 @@
                 document.getElementById('bankAccount').value = storeData.bankAccount || '';
                 document.getElementById('bankAccountName').value = storeData.bankAccountName || '';
                 updateStoreLogoPreview();
+            } else {
+                // Create default store if it doesn't exist
+                await createDefaultStore();
+                await loadStoreSettings();
             }
         }
 
         function updateStoreLogoPreview() {
-            const emoji = document.getElementById('storeLogo').value.trim() || 'logo/VarshA_LOGO.png';
-            const imageUrl = document.getElementById('storeLogoImage').value.trim() || 'logo/VarshA_LOGO.png';
+            const emoji = document.getElementById('storeLogo').value.trim() || '🍎';
+            const imageUrl = document.getElementById('storeLogoImage').value.trim();
             const previewEl = document.getElementById('storeLogoPreview');
 
             if (imageUrl) {
@@ -1021,7 +1086,7 @@
                     address: document.getElementById('storeAddress').value.trim(),
                     phone: document.getElementById('storePhone').value.trim(),
                     logo: document.getElementById('storeLogo').value.trim() || '🍎',
-                    logoImage: document.getElementById('storeLogoImage').value.trim() || 'logo/VarshA_LOGO.png',
+                    logoImage: document.getElementById('storeLogoImage').value.trim(),
                     bankName: document.getElementById('bankName').value,
                     bankAccount: document.getElementById('bankAccount').value.trim(),
                     bankAccountName: document.getElementById('bankAccountName').value.trim(),
@@ -1045,16 +1110,15 @@
 
             if (unsubscribeProducts) unsubscribeProducts();
 
-            // Simplified query without orderBy to avoid index requirement
+            // Load all products for all admins to manage
             unsubscribeProducts = db.collection('products')
-                .where('sellerId', '==', currentUser.uid)
                 .onSnapshot(snapshot => {
                     productsCache = snapshot.docs.map(doc => doc.data());
                     // Sort by createdAt in memory
                     productsCache.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
                     renderProductsSeller();
                 }, error => {
-                    console.error('Error loading seller products:', error);
+                    console.error('Error loading products:', error);
                 });
         }
 
@@ -1244,7 +1308,6 @@
                     const id = 'P' + Date.now().toString(36).toUpperCase();
                     await db.collection('products').doc(id).set({
                         id,
-                        sellerId: currentUser.uid,
                         ...productData,
                         createdAt: Date.now()
                     });
