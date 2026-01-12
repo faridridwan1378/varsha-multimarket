@@ -225,6 +225,11 @@
                         <label class="block text-sm font-medium text-gray-700 mb-1">📧 Email</label>
                         <input type="email" id="registerEmail" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-green-500 focus:outline-none" placeholder="email@contoh.com">
                     </div>
+                    <div id="registerRefCodeField" class="hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">🔐 Reference Code</label>
+                        <input type="text" id="registerRefCode" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-green-500 focus:outline-none font-mono tracking-wider" placeholder="Masukkan kode referensi">
+                        <p class="text-xs text-gray-400 mt-1">Minta kode referensi dari admin toko</p>
+                    </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">📍 Alamat</label>
                         <textarea id="registerAddress" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-green-500 focus:outline-none" rows="2" placeholder="Alamat lengkap"></textarea>
@@ -245,17 +250,10 @@
 
             <div id="authError" class="hidden mt-4 bg-red-50 text-red-600 p-3 rounded-lg text-sm whitespace-pre-line"></div>
 
-            <!-- Sync Status -->
-            <div id="syncStatus" class="mt-4 p-3 rounded-xl bg-gray-50 text-center">
-                <div class="flex items-center justify-center gap-2 text-gray-600 mb-2">
-                    <span id="syncIcon">☁️</span>
-                    <span id="syncText" class="text-sm">Terhubung ke Firebase Cloud</span>
-                </div>
-                <button onclick="syncWithFirebase()" id="syncBtn" class="bg-blue-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-600 transition flex items-center gap-2 mx-auto">
-                    <span id="syncSpinner" class="hidden w-4 h-4 border-2 border-white border-t-transparent rounded-full spinner"></span>
-                    🔄 Sync dengan Firebase
-                </button>
+            <div class="mt-6 pt-4 border-t border-gray-200 text-center">
+                <p class="text-xs text-gray-400">© 2025 <a href="https://rdwan.net" target="_blank" class="text-green-500 hover:text-green-600 hover:underline">rdwan.net</a></p>
             </div>
+
         </div>
     </div>
 
@@ -740,6 +738,15 @@
                                 <p class="text-xs text-gray-400 mt-1">Jika diisi, gambar akan menggantikan emoji</p>
                             </div>
                         </div>
+                    </div>
+
+                    <hr class="my-6">
+
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">🔑 Kode Referensi Penjual</h3>
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">🔐 Reference Code</label>
+                        <input type="text" id="referenceCode" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-green-500 focus:outline-none font-mono text-lg tracking-wider" placeholder="Contoh: VARSHA2025">
+                        <p class="text-xs text-gray-400 mt-1">Kode ini diperlukan untuk registrasi penjual baru. Bagikan hanya kepada orang yang dipercaya.</p>
                     </div>
 
                     <hr class="my-6">
@@ -1287,6 +1294,7 @@
         function toggleRegisterFields() {
             const role = document.querySelector('input[name="userRole"]:checked').value;
             document.getElementById('registerEmailField').classList.toggle('hidden', role !== 'seller');
+            document.getElementById('registerRefCodeField').classList.toggle('hidden', role !== 'seller');
         }
 
         // Toggle login field berdasarkan role
@@ -1440,6 +1448,7 @@
             const passwordConfirm = document.getElementById('registerPasswordConfirm').value;
             const role = document.querySelector('input[name="userRole"]:checked').value;
             const email = role === 'seller' ? document.getElementById('registerEmail').value.trim() : '';
+            const refCode = role === 'seller' ? document.getElementById('registerRefCode').value.trim() : '';
 
             if (!name || !phone || !password) {
                 showAuthError('Nama, No. Telepon, dan password wajib diisi!');
@@ -1448,6 +1457,11 @@
 
             if (role === 'seller' && !email) {
                 showAuthError('Email wajib diisi untuk penjual!');
+                return;
+            }
+
+            if (role === 'seller' && !refCode) {
+                showAuthError('Reference Code wajib diisi untuk penjual!');
                 return;
             }
 
@@ -1462,6 +1476,37 @@
             }
 
             showLoading('Memeriksa data...');
+
+            // Validasi Reference Code untuk penjual
+            if (role === 'seller') {
+                try {
+                    const storeDoc = await db.collection('stores').doc(STORE_ID).get();
+                    if (storeDoc.exists) {
+                        const storeData = storeDoc.data();
+                        const validRefCode = storeData.referenceCode || '';
+                        
+                        if (!validRefCode) {
+                            hideLoading();
+                            showAuthError('Toko belum memiliki Reference Code. Hubungi admin untuk setup Reference Code terlebih dahulu.');
+                            return;
+                        }
+                        
+                        if (refCode !== validRefCode) {
+                            hideLoading();
+                            showAuthError('Reference Code tidak valid!\n\nPastikan Anda memasukkan kode yang benar dari admin toko.');
+                            return;
+                        }
+                    } else {
+                        // Toko belum ada, ini adalah penjual pertama - tidak perlu reference code
+                        console.log('Toko belum ada, membuat toko baru...');
+                    }
+                } catch (error) {
+                    console.error('Error checking reference code:', error);
+                    hideLoading();
+                    showAuthError('Gagal memverifikasi Reference Code. Periksa koneksi internet.');
+                    return;
+                }
+            }
 
             try {
                 // Check if phone + role already exists in Firestore
@@ -1710,6 +1755,7 @@
                     document.getElementById('bankName').value = storeData.bankName || '';
                     document.getElementById('bankAccount').value = storeData.bankAccount || '';
                     document.getElementById('bankAccountName').value = storeData.bankAccountName || '';
+                    document.getElementById('referenceCode').value = storeData.referenceCode || '';
                     
                     // Update preview
                     updateStoreLogoPreview();
@@ -1809,6 +1855,7 @@
                     document.getElementById('bankName').value = storeData.bankName || '';
                     document.getElementById('bankAccount').value = storeData.bankAccount || '';
                     document.getElementById('bankAccountName').value = storeData.bankAccountName || '';
+                    document.getElementById('referenceCode').value = storeData.referenceCode || '';
                     
                     updateStoreLogoPreview();
                     
@@ -1852,6 +1899,7 @@
                     bankName: document.getElementById('bankName').value,
                     bankAccount: document.getElementById('bankAccount').value.trim(),
                     bankAccountName: document.getElementById('bankAccountName').value.trim(),
+                    referenceCode: document.getElementById('referenceCode').value.trim(),
                     updatedAt: Date.now(),
                     updatedBy: currentUser.uid
                 };
