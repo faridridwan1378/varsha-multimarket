@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fruits & Goods</title>
+    <title>🛒 Fruits & Goods</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -54,7 +54,68 @@
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            line-clamp: 2;
+        }
+        
+        /* WhatsApp Style Chat */
+        .wa-bg-pattern {
+            background-color: #e5ddd5;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c9c4bc' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .wa-bubble-out {
+            background: #dcf8c6;
+            border-radius: 8px 0 8px 8px;
+            position: relative;
+        }
+        .wa-bubble-out::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -8px;
+            border-width: 0 0 10px 10px;
+            border-style: solid;
+            border-color: transparent transparent transparent #dcf8c6;
+        }
+        
+        .wa-bubble-in {
+            background: #ffffff;
+            border-radius: 0 8px 8px 8px;
+            position: relative;
+        }
+        .wa-bubble-in::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -8px;
+            border-width: 0 10px 10px 0;
+            border-style: solid;
+            border-color: transparent #ffffff transparent transparent;
+        }
+        
+        .typing-dots span {
+            animation: typingBounce 1.4s infinite ease-in-out;
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #128c7e;
+            border-radius: 50%;
+            margin: 0 2px;
+        }
+        .typing-dots span:nth-child(1) { animation-delay: 0s; }
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+        
+        @keyframes typingBounce {
+            0%, 60%, 100% { transform: translateY(0); }
+            30% { transform: translateY(-8px); }
+        }
+        
+        .wa-check { color: #8696a0; }
+        .wa-check-read { color: #53bdeb; }
+        
+        .wa-time {
+            font-size: 11px;
+            color: rgba(0,0,0,0.45);
         }
     </style>
 </head>
@@ -226,13 +287,121 @@
             
             <div id="modeButtons" class="grid grid-cols-1 gap-4"></div>
 
-            <button onclick="openPasswordChangeModal()" class="mt-4 text-blue-500 hover:text-blue-700 text-sm underline">
-                🔒 Ubah Password
-            </button>
-            <button onclick="handleLogout()" class="mt-2 text-gray-400 hover:text-gray-600 text-sm underline">
-                🚪 Logout
-            </button>
+            <div class="flex items-center justify-center gap-4 mt-6">
+                <button onclick="openChangePasswordModal()" class="text-blue-500 hover:text-blue-700 text-sm underline">
+                    🔐 Ubah Password
+                </button>
+                <span class="text-gray-300">|</span>
+                <button onclick="handleLogout()" class="text-gray-400 hover:text-gray-600 text-sm underline">
+                    🚪 Logout
+                </button>
+            </div>
         </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-[100] p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full fade-in">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">🔐 Ubah Password</h3>
+                <button onclick="closeChangePasswordModal()" class="text-2xl text-gray-400 hover:text-gray-600">×</button>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">🔒 Password Lama</label>
+                    <input type="password" id="oldPassword" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-blue-500 focus:outline-none" placeholder="Masukkan password lama">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">🔑 Password Baru</label>
+                    <input type="password" id="newPassword" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-blue-500 focus:outline-none" placeholder="Minimal 6 karakter">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">🔑 Konfirmasi Password Baru</label>
+                    <input type="password" id="confirmNewPassword" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-blue-500 focus:outline-none" placeholder="Ulangi password baru">
+                </div>
+            </div>
+
+            <div id="changePasswordError" class="hidden mt-4 bg-red-50 text-red-600 p-3 rounded-lg text-sm"></div>
+            <div id="changePasswordSuccess" class="hidden mt-4 bg-green-50 text-green-600 p-3 rounded-lg text-sm"></div>
+
+            <div class="flex gap-3 mt-6">
+                <button onclick="closeChangePasswordModal()" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-300 transition">Batal</button>
+                <button onclick="handleChangePassword()" class="flex-1 bg-blue-500 text-white py-3 rounded-xl font-semibold hover:bg-blue-600 transition">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Chat Buttons Removed - Use WhatsApp buttons on orders instead -->
+    <div id="floatingChatBuyer" class="fixed bottom-6 right-6 z-40 hidden" style="display:none !important;">
+        <div id="chatListBuyer" class="hidden absolute bottom-16 right-0 w-80 bg-white rounded-xl shadow-2xl overflow-hidden mb-2">
+            <!-- WhatsApp Style Header -->
+            <div class="bg-[#075e54] text-white p-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-base">Chat</h3>
+                        <p class="text-xs text-green-200">Pesanan Anda</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Search Bar -->
+            <div class="p-2 bg-[#f6f6f6]">
+                <div class="bg-white rounded-lg px-3 py-2 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                    <input type="text" placeholder="Cari chat..." class="flex-1 text-sm outline-none bg-transparent">
+                </div>
+            </div>
+            <div id="chatOrderListBuyer" class="max-h-72 overflow-y-auto bg-white"></div>
+        </div>
+        <button onclick="toggleChatListBuyer()" class="bg-[#25d366] hover:bg-[#128c7e] text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110">
+            <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            <span id="chatBadgeBuyer" class="absolute -top-1 -right-1 bg-[#25d366] text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold hidden border-2 border-white">0</span>
+        </button>
+    </div>
+
+    <!-- Floating Chat Seller Removed -->
+    <div id="floatingChatSeller" class="fixed bottom-6 right-6 z-40 hidden" style="display:none !important;">
+        <div id="chatListSeller" class="hidden absolute bottom-16 right-0 w-80 bg-white rounded-xl shadow-2xl overflow-hidden mb-2">
+            <!-- WhatsApp Style Header -->
+            <div class="bg-[#075e54] text-white p-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="font-semibold text-base">Chat</h3>
+                        <p class="text-xs text-green-200">Pembeli Anda</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Search Bar -->
+            <div class="p-2 bg-[#f6f6f6]">
+                <div class="bg-white rounded-lg px-3 py-2 flex items-center gap-2">
+                    <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
+                    <input type="text" placeholder="Cari pembeli..." class="flex-1 text-sm outline-none bg-transparent">
+                </div>
+            </div>
+            <div id="chatOrderListSeller" class="max-h-72 overflow-y-auto bg-white"></div>
+        </div>
+        <button onclick="toggleChatListSeller()" class="bg-[#25d366] hover:bg-[#128c7e] text-white w-14 h-14 rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110">
+            <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            <span id="chatBadgeSeller" class="absolute -top-1 -right-1 bg-[#25d366] text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold hidden border-2 border-white">0</span>
+        </button>
     </div>
 
     <!-- Buyer Mode -->
@@ -240,7 +409,7 @@
         <header class="bg-white shadow-md sticky top-0 z-50">
             <div class="container mx-auto px-4 py-4 flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <img src="https://raw.githubusercontent.com/faridridwan1378/varsha-catalog/main/gambar buah/VarshA_LOGO2.png" alt="Logo" class="w-16 h-16 object-contain">
+                    <span class="text-3xl">🛒</span>
                     <div>
                         <h1 class="text-xl font-bold text-green-600" id="storeNameHeader">Fruits & Goods</h1>
                         <p class="text-xs text-gray-400">Halo, <span id="buyerNameHeader" class="font-semibold text-gray-600"></span></p>
@@ -839,35 +1008,6 @@
         </div>
     </div>
 
-    <!-- Password Change Modal -->
-    <div id="passwordChangeModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-2xl p-6 max-w-md w-full fade-in">
-            <h3 class="text-xl font-bold text-gray-800 mb-4">🔒 Ubah Password</h3>
-
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">🔒 Password Lama</label>
-                    <input type="password" id="oldPassword" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-green-500 focus:outline-none" placeholder="Masukkan password lama">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">🔑 Password Baru</label>
-                    <input type="password" id="newPassword" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-green-500 focus:outline-none" placeholder="Minimal 6 karakter">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">🔑 Konfirmasi Password Baru</label>
-                    <input type="password" id="confirmNewPassword" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-green-500 focus:outline-none" placeholder="Ulangi password baru">
-                </div>
-            </div>
-
-            <div id="passwordChangeError" class="hidden mt-4 bg-red-50 text-red-600 p-3 rounded-lg text-sm"></div>
-
-            <div class="flex gap-3 mt-6">
-                <button onclick="closePasswordChangeModal()" class="flex-1 bg-gray-200 text-gray-700 py-3 rounded-xl font-semibold hover:bg-gray-300 transition">Batal</button>
-                <button onclick="changePassword()" class="flex-1 bg-green-500 text-white py-3 rounded-xl font-semibold hover:bg-green-600 transition">Ubah Password</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Success Modal -->
     <div id="successModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
         <div class="bg-white rounded-2xl p-8 max-w-sm w-full mx-4 text-center slide-in">
@@ -876,6 +1016,96 @@
             <p class="text-gray-500 mb-2">Order Anda telah dikirim ke penjual</p>
             <p class="text-sm text-gray-400 mb-6">ID Order: <span id="orderIdDisplay" class="font-mono bg-gray-100 px-2 py-1 rounded"></span></p>
             <button onclick="closeSuccessModal()" class="bg-green-500 text-white px-6 py-2 rounded-xl font-semibold hover:bg-green-600">Tutup</button>
+        </div>
+    </div>
+
+    <!-- Chat Modal Removed - Using WhatsApp only -->
+    <div id="chatModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-[100] p-2 md:p-4" style="display:none !important;">
+        <div class="bg-white rounded-lg w-full max-w-md h-[90vh] md:h-[85vh] flex flex-col slide-in shadow-2xl overflow-hidden">
+            <!-- WhatsApp Header -->
+            <div class="bg-[#075e54] text-white px-3 py-2 flex items-center gap-3">
+                <button onclick="closeChatModal()" class="text-white hover:bg-white/10 rounded-full p-1">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                </button>
+                <div class="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-bold text-lg" id="chatPartnerAvatar">P</div>
+                <div class="flex-1">
+                    <p class="font-medium text-base" id="chatPartnerName">Partner</p>
+                    <p class="text-xs text-green-200" id="chatPartnerStatus">online</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button class="hover:bg-white/10 rounded-full p-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M15.9 14.3H15l-.3-.3c1-1.1 1.6-2.7 1.6-4.3 0-3.7-3-6.7-6.7-6.7S3 6 3 9.7s3 6.7 6.7 6.7c1.6 0 3.2-.6 4.3-1.6l.3.3v.8l5.1 5.1 1.5-1.5-5-5.2zm-6.2 0c-2.6 0-4.6-2.1-4.6-4.6s2.1-4.6 4.6-4.6 4.6 2.1 4.6 4.6-2 4.6-4.6 4.6z"/>
+                        </svg>
+                    </button>
+                    <button class="hover:bg-white/10 rounded-full p-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 7a2 2 0 1 0-.001-4.001A2 2 0 0 0 12 7zm0 2a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 9zm0 6a2 2 0 1 0-.001 3.999A2 2 0 0 0 12 15z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Order Info Bar -->
+            <div class="bg-[#128c7e] text-white px-4 py-2 flex items-center justify-between text-sm">
+                <div class="flex items-center gap-2">
+                    <span>📋</span>
+                    <span id="chatOrderId" class="font-mono">ORD123</span>
+                </div>
+                <span id="chatOrderStatus" class="text-xs bg-white/20 px-2 py-0.5 rounded-full">Status</span>
+            </div>
+            
+            <!-- Chat Messages - WhatsApp Style -->
+            <div id="chatMessages" class="flex-1 overflow-y-auto wa-bg-pattern px-3 py-2">
+                <!-- Messages will be loaded here -->
+                <div class="text-center py-8">
+                    <div class="inline-block bg-[#fcf4cb] rounded-lg px-4 py-2 text-sm text-[#54656f] shadow-sm">
+                        <span class="text-lg block mb-1">🔒</span>
+                        Pesan dan panggilan terenkripsi end-to-end.<br>
+                        Tidak ada pihak ketiga yang dapat membaca.
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Typing Indicator -->
+            <div id="typingIndicator" class="hidden px-4 py-2 bg-[#e5ddd5]">
+                <div class="inline-flex items-center gap-2 bg-white rounded-lg px-3 py-2 shadow-sm">
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    <span class="text-sm text-gray-500">mengetik...</span>
+                </div>
+            </div>
+            
+            <!-- WhatsApp Style Input -->
+            <div class="bg-[#f0f0f0] px-2 py-2 flex items-center gap-2">
+                <button class="text-[#54656f] hover:bg-white/50 rounded-full p-2">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M9.153 11.603c.795 0 1.439-.879 1.439-1.962s-.644-1.962-1.439-1.962-1.439.879-1.439 1.962.644 1.962 1.439 1.962zm-3.204 1.362c-.026-.307-.131 5.218 6.063 5.551 6.066-.25 6.066-5.551 6.066-5.551-6.078 1.416-12.129 0-12.129 0zm11.363 1.108s-.669 1.959-5.051 1.959c-3.505 0-5.388-1.164-5.607-1.959 0 0 5.912 1.055 10.658 0zM11.804 1.011C5.609 1.011.978 6.033.978 12.228s4.826 10.761 11.021 10.761S23.02 18.423 23.02 12.228c.001-6.195-5.021-11.217-11.216-11.217zM12 21.354c-5.273 0-9.381-3.886-9.381-9.159s3.942-9.548 9.215-9.548 9.548 4.275 9.548 9.548c-.001 5.272-4.109 9.159-9.382 9.159zm3.108-9.751c.795 0 1.439-.879 1.439-1.962s-.644-1.962-1.439-1.962-1.439.879-1.439 1.962.644 1.962 1.439 1.962z"/>
+                    </svg>
+                </button>
+                <button class="text-[#54656f] hover:bg-white/50 rounded-full p-2">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M1.816 15.556v.002c0 1.502.584 2.912 1.646 3.972s2.472 1.647 3.974 1.647a5.58 5.58 0 0 0 3.972-1.645l9.547-9.548c.769-.768 1.147-1.767 1.058-2.817-.079-.968-.548-1.927-1.319-2.698-1.594-1.592-4.068-1.711-5.517-.262l-7.916 7.915c-.881.881-.792 2.25.214 3.261.959.958 2.423 1.053 3.263.215l5.511-5.512c.28-.28.267-.722.053-.936l-.244-.244c-.191-.191-.567-.349-.957.04l-5.506 5.506c-.18.18-.635.127-.976-.214-.098-.097-.576-.613-.213-.973l7.915-7.917c.818-.817 2.267-.699 3.23.262.5.501.802 1.1.849 1.685.051.573-.156 1.111-.589 1.543l-9.547 9.549a3.97 3.97 0 0 1-2.829 1.171 3.975 3.975 0 0 1-2.83-1.173 3.973 3.973 0 0 1-1.172-2.828c0-1.071.415-2.076 1.172-2.83l7.209-7.211c.157-.157.264-.579.028-.814L11.5 4.36a.572.572 0 0 0-.834.018l-7.205 7.207a5.577 5.577 0 0 0-1.645 3.971z"/>
+                    </svg>
+                </button>
+                <div class="flex-1 relative">
+                    <input type="text" id="chatInput" 
+                        class="w-full bg-white rounded-full px-4 py-2.5 pr-12 focus:outline-none text-[15px] shadow-sm" 
+                        placeholder="Ketik pesan" 
+                        onkeypress="if(event.key==='Enter')sendChatMessage()"
+                        oninput="handleTyping()">
+                </div>
+                <button onclick="sendChatMessage()" class="bg-[#00a884] hover:bg-[#008f72] text-white rounded-full p-2.5 shadow-lg transition-all">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M1.101 21.757L23.8 12.028 1.101 2.3l.011 7.912 13.623 1.816-13.623 1.817-.011 7.912z"/>
+                    </svg>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -3042,99 +3272,587 @@ ${itemsList}
             openWhatsApp(storeData?.phone, waMessage);
         }
 
-        // ==================== PASSWORD CHANGE ====================
-        function openPasswordChangeModal() {
-            document.getElementById('passwordChangeModal').classList.remove('hidden');
-            document.getElementById('passwordChangeModal').classList.add('flex');
-            document.getElementById('passwordChangeError').classList.add('hidden');
-            // Clear form
+        // ==================== CHANGE PASSWORD ====================
+        function openChangePasswordModal() {
             document.getElementById('oldPassword').value = '';
             document.getElementById('newPassword').value = '';
             document.getElementById('confirmNewPassword').value = '';
+            document.getElementById('changePasswordError').classList.add('hidden');
+            document.getElementById('changePasswordSuccess').classList.add('hidden');
+            
+            document.getElementById('changePasswordModal').classList.remove('hidden');
+            document.getElementById('changePasswordModal').classList.add('flex');
         }
 
-        function closePasswordChangeModal() {
-            document.getElementById('passwordChangeModal').classList.add('hidden');
-            document.getElementById('passwordChangeModal').classList.remove('flex');
+        function closeChangePasswordModal() {
+            document.getElementById('changePasswordModal').classList.add('hidden');
+            document.getElementById('changePasswordModal').classList.remove('flex');
         }
 
-        async function changePassword() {
-            const oldPassword = document.getElementById('oldPassword').value.trim();
-            const newPassword = document.getElementById('newPassword').value.trim();
-            const confirmPassword = document.getElementById('confirmNewPassword').value.trim();
-            const errorEl = document.getElementById('passwordChangeError');
+        function showChangePasswordError(message) {
+            const errorEl = document.getElementById('changePasswordError');
+            errorEl.textContent = message;
+            errorEl.classList.remove('hidden');
+            document.getElementById('changePasswordSuccess').classList.add('hidden');
+        }
 
-            // Clear previous error
-            errorEl.classList.add('hidden');
+        function showChangePasswordSuccess(message) {
+            const successEl = document.getElementById('changePasswordSuccess');
+            successEl.textContent = message;
+            successEl.classList.remove('hidden');
+            document.getElementById('changePasswordError').classList.add('hidden');
+        }
 
-            // Validation
-            if (!oldPassword || !newPassword || !confirmPassword) {
-                errorEl.textContent = 'Semua field harus diisi!';
-                errorEl.classList.remove('hidden');
+        async function handleChangePassword() {
+            const oldPassword = document.getElementById('oldPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+            // Validasi
+            if (!oldPassword || !newPassword || !confirmNewPassword) {
+                showChangePasswordError('Semua field wajib diisi!');
                 return;
             }
 
             if (newPassword.length < 6) {
-                errorEl.textContent = 'Password baru minimal 6 karakter!';
-                errorEl.classList.remove('hidden');
+                showChangePasswordError('Password baru minimal 6 karakter!');
                 return;
             }
 
-            if (newPassword !== confirmPassword) {
-                errorEl.textContent = 'Password baru dan konfirmasi tidak cocok!';
-                errorEl.classList.remove('hidden');
+            if (newPassword !== confirmNewPassword) {
+                showChangePasswordError('Password baru dan konfirmasi tidak cocok!');
                 return;
             }
 
             if (oldPassword === newPassword) {
-                errorEl.textContent = 'Password baru tidak boleh sama dengan password lama!';
-                errorEl.classList.remove('hidden');
+                showChangePasswordError('Password baru harus berbeda dengan password lama!');
                 return;
             }
 
             showLoading('Mengubah password...');
 
             try {
-                // Re-authenticate user with old password
                 const user = auth.currentUser;
-                const credential = firebase.auth.EmailAuthProvider.credential(
-                    user.email,
-                    oldPassword
-                );
+                
+                if (!user || !user.email) {
+                    showChangePasswordError('User tidak ditemukan. Silakan login ulang.');
+                    hideLoading();
+                    return;
+                }
 
+                // Re-authenticate user dengan password lama
+                const credential = firebase.auth.EmailAuthProvider.credential(user.email, oldPassword);
                 await user.reauthenticateWithCredential(credential);
 
                 // Update password
                 await user.updatePassword(newPassword);
 
-                closePasswordChangeModal();
-                alert('✅ Password berhasil diubah!\n\nSilakan login kembali dengan password baru.');
+                showChangePasswordSuccess('✅ Password berhasil diubah!');
+                
+                // Clear form
+                document.getElementById('oldPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmNewPassword').value = '';
 
-                // Logout user after password change for security
-                await auth.signOut();
+                // Tutup modal setelah 2 detik
+                setTimeout(() => {
+                    closeChangePasswordModal();
+                }, 2000);
 
             } catch (error) {
-                console.error('Password change error:', error);
-
+                console.error('Change password error:', error);
+                
                 let message = 'Gagal mengubah password. ';
                 if (error.code === 'auth/wrong-password') {
                     message = 'Password lama salah!';
                 } else if (error.code === 'auth/weak-password') {
-                    message = 'Password baru terlalu lemah!';
+                    message = 'Password baru terlalu lemah. Minimal 6 karakter.';
                 } else if (error.code === 'auth/requires-recent-login') {
-                    message = 'Sesi login telah kedaluwarsa. Silakan login ulang.';
+                    message = 'Sesi login sudah lama. Silakan logout dan login kembali.';
                 } else if (error.code === 'auth/network-request-failed') {
                     message = 'Gagal terhubung ke server. Periksa koneksi internet.';
                 } else {
                     message += error.message;
                 }
-
-                errorEl.textContent = message;
-                errorEl.classList.remove('hidden');
+                
+                showChangePasswordError(message);
             } finally {
                 hideLoading();
             }
         }
+
+        // ==================== FLOATING CHAT ====================
+        function toggleChatListBuyer() {
+            const list = document.getElementById('chatListBuyer');
+            list.classList.toggle('hidden');
+            if (!list.classList.contains('hidden')) {
+                renderChatListBuyer();
+            }
+        }
+
+        function toggleChatListSeller() {
+            const list = document.getElementById('chatListSeller');
+            list.classList.toggle('hidden');
+            if (!list.classList.contains('hidden')) {
+                renderChatListSeller();
+            }
+        }
+
+        function renderChatListBuyer() {
+            const container = document.getElementById('chatOrderListBuyer');
+            
+            if (ordersCache.length === 0) {
+                container.innerHTML = `
+                    <div class="p-6 text-center text-gray-400">
+                        <span class="text-3xl block mb-2">📭</span>
+                        <p class="text-sm">Belum ada pesanan</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = ordersCache.map(order => {
+                const time = new Date(order.createdAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                const statusLabels = {
+                    pending: 'Menunggu konfirmasi...',
+                    waiting_buyer: 'Perlu konfirmasi Anda',
+                    waiting_payment: 'Menunggu pembayaran',
+                    processing: 'Pesanan diproses',
+                    shipped: 'Pesanan dikirim',
+                    completed: 'Pesanan selesai',
+                    cancelled: 'Dibatalkan'
+                };
+                
+                return `
+                    <div onclick="openChatFromFloating('${order.id}', 'buyer')" class="flex items-center gap-3 px-4 py-3 hover:bg-[#f5f6f6] cursor-pointer border-b border-gray-100">
+                        <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-xl flex-shrink-0">
+                            ${order.items[0]?.emoji || '📦'}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-baseline">
+                                <p class="font-medium text-[17px] text-gray-900 truncate">${storeData?.name || 'Penjual'}</p>
+                                <span class="text-xs text-gray-500 flex-shrink-0 ml-2">${time}</span>
+                            </div>
+                            <div class="flex items-center gap-1">
+                                <span class="wa-check-read text-xs">✓✓</span>
+                                <p class="text-sm text-gray-500 truncate">${statusLabels[order.status] || order.status}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderChatListSeller() {
+            const container = document.getElementById('chatOrderListSeller');
+            
+            if (ordersCache.length === 0) {
+                container.innerHTML = `
+                    <div class="p-6 text-center text-gray-400">
+                        <span class="text-3xl block mb-2">📭</span>
+                        <p class="text-sm">Belum ada order</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = ordersCache.map(order => {
+                const time = new Date(order.createdAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                const statusLabels = {
+                    pending: 'Order baru masuk',
+                    waiting_buyer: 'Menunggu konfirmasi pembeli',
+                    waiting_payment: 'Menunggu pembayaran',
+                    processing: 'Sedang diproses',
+                    shipped: 'Dalam pengiriman',
+                    completed: 'Selesai',
+                    cancelled: 'Dibatalkan'
+                };
+                const unread = order.status === 'pending' || order.status === 'waiting_payment';
+
+                return `
+                    <div onclick="openChatFromFloating('${order.id}', 'seller')" class="flex items-center gap-3 px-4 py-3 hover:bg-[#f5f6f6] cursor-pointer border-b border-gray-100">
+                        <div class="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-xl font-semibold text-gray-600 flex-shrink-0">
+                            ${order.buyerName?.charAt(0)?.toUpperCase() || 'P'}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-baseline">
+                                <p class="font-medium text-[17px] text-gray-900 truncate">${order.buyerName || 'Pembeli'}</p>
+                                <span class="text-xs ${unread ? 'text-[#25d366] font-medium' : 'text-gray-500'} flex-shrink-0 ml-2">${time}</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <p class="text-sm text-gray-500 truncate">${statusLabels[order.status] || order.status}</p>
+                                ${unread ? '<span class="bg-[#25d366] text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-medium flex-shrink-0">1</span>' : ''}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openChatFromFloating(orderId, role) {
+            // Tutup list
+            document.getElementById('chatListBuyer')?.classList.add('hidden');
+            document.getElementById('chatListSeller')?.classList.add('hidden');
+            
+            // Buka chat internal
+            openInternalChat(orderId);
+        }
+
+        // ==================== INTERNAL CHAT ====================
+        let currentChatOrderId = null;
+        let unsubscribeChat = null;
+
+        // Typing indicator
+        let typingTimeout = null;
+        let isTyping = false;
+
+        function handleTyping() {
+            // Show typing indicator to partner (simulated)
+            if (!isTyping && currentChatOrderId) {
+                isTyping = true;
+                // In real app, update Firebase with typing status
+            }
+            
+            // Clear previous timeout
+            if (typingTimeout) clearTimeout(typingTimeout);
+            
+            // Set timeout to stop typing indicator
+            typingTimeout = setTimeout(() => {
+                isTyping = false;
+            }, 2000);
+        }
+
+        function showTypingIndicator(show = true) {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) {
+                indicator.classList.toggle('hidden', !show);
+            }
+        }
+
+        function openInternalChat(orderId) {
+            const order = ordersCache.find(o => o.id === orderId);
+            if (!order) return;
+
+            currentChatOrderId = orderId;
+
+            // Set chat info
+            document.getElementById('chatOrderId').textContent = orderId;
+            
+            // Set order status
+            const statusLabels = {
+                pending: '⏳ Pending',
+                waiting_buyer: '🔔 Menunggu',
+                waiting_payment: '💰 Bayar',
+                processing: '🔄 Proses',
+                shipped: '🚚 Dikirim',
+                completed: '✅ Selesai',
+                cancelled: '❌ Batal'
+            };
+            document.getElementById('chatOrderStatus').textContent = statusLabels[order.status] || order.status;
+
+            // Determine chat partner based on current user role
+            if (currentUserData?.role === 'seller') {
+                // Penjual chat dengan pembeli
+                document.getElementById('chatPartnerAvatar').textContent = order.buyerName?.charAt(0)?.toUpperCase() || 'P';
+                document.getElementById('chatPartnerAvatar').className = 'w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-bold text-lg';
+                document.getElementById('chatPartnerName').textContent = order.buyerName || 'Pembeli';
+                document.getElementById('chatPartnerStatus').textContent = 'online • ' + (order.buyerPhone || '');
+            } else {
+                // Pembeli chat dengan penjual
+                document.getElementById('chatPartnerAvatar').textContent = storeData?.name?.charAt(0)?.toUpperCase() || 'T';
+                document.getElementById('chatPartnerAvatar').className = 'w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center text-gray-600 font-bold text-lg';
+                document.getElementById('chatPartnerName').textContent = storeData?.name || 'Penjual';
+                document.getElementById('chatPartnerStatus').textContent = 'online • ' + (storeData?.phone || '');
+            }
+
+            // Open modal
+            document.getElementById('chatModal').classList.remove('hidden');
+            document.getElementById('chatModal').classList.add('flex');
+
+            // Load messages
+            loadChatMessages(orderId);
+
+            // Focus on input
+            setTimeout(() => {
+                document.getElementById('chatInput').focus();
+            }, 300);
+        }
+
+        function closeChatModal() {
+            document.getElementById('chatModal').classList.add('hidden');
+            document.getElementById('chatModal').classList.remove('flex');
+            currentChatOrderId = null;
+
+            // Unsubscribe from chat listener
+            if (unsubscribeChat) {
+                unsubscribeChat();
+                unsubscribeChat = null;
+            }
+        }
+
+        function loadChatMessages(orderId) {
+            if (!db) return;
+
+            const messagesContainer = document.getElementById('chatMessages');
+            messagesContainer.innerHTML = `
+                <div class="text-center text-gray-400 text-sm py-4">
+                    <div class="w-6 h-6 border-2 border-green-500 border-t-transparent rounded-full spinner mx-auto mb-2"></div>
+                    <p>Memuat pesan...</p>
+                </div>
+            `;
+
+            // Unsubscribe previous listener
+            if (unsubscribeChat) {
+                unsubscribeChat();
+            }
+
+            // Listen to messages for this order
+            unsubscribeChat = db.collection('chats')
+                .where('orderId', '==', orderId)
+                .orderBy('timestamp', 'asc')
+                .onSnapshot(snapshot => {
+                    const messages = snapshot.docs.map(doc => doc.data());
+                    renderChatMessages(messages);
+                    
+                    // Mark messages as read
+                    markMessagesAsRead(orderId);
+                }, error => {
+                    console.error('Error loading messages:', error);
+                    // Fallback tanpa orderBy jika index belum dibuat
+                    db.collection('chats')
+                        .where('orderId', '==', orderId)
+                        .get()
+                        .then(snapshot => {
+                            const messages = snapshot.docs.map(doc => doc.data());
+                            messages.sort((a, b) => (a.timestamp || 0) - (b.timestamp || 0));
+                            renderChatMessages(messages);
+                        });
+                });
+        }
+
+        function renderChatMessages(messages) {
+            const container = document.getElementById('chatMessages');
+
+            if (messages.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-8">
+                        <div class="inline-block bg-[#fcf4cb] rounded-lg px-4 py-2 text-sm text-[#54656f] shadow-sm">
+                            <span class="text-lg block mb-1">🔒</span>
+                            Pesan terenkripsi end-to-end.<br>
+                            Mulai percakapan sekarang!
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            // Group messages by date
+            const groupedMessages = {};
+            messages.forEach(msg => {
+                const date = msg.timestamp ? new Date(msg.timestamp) : new Date();
+                const dateKey = date.toDateString();
+                if (!groupedMessages[dateKey]) {
+                    groupedMessages[dateKey] = [];
+                }
+                groupedMessages[dateKey].push(msg);
+            });
+
+            let html = '';
+            const today = new Date().toDateString();
+            const yesterday = new Date(Date.now() - 86400000).toDateString();
+
+            Object.keys(groupedMessages).forEach(dateKey => {
+                // Date separator
+                let dateLabel = dateKey;
+                if (dateKey === today) {
+                    dateLabel = 'HARI INI';
+                } else if (dateKey === yesterday) {
+                    dateLabel = 'KEMARIN';
+                } else {
+                    const d = new Date(dateKey);
+                    dateLabel = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                }
+
+                html += `
+                    <div class="flex justify-center my-3">
+                        <span class="bg-[#e1f2fb] text-[#54656f] text-xs px-3 py-1 rounded-lg shadow-sm">${dateLabel}</span>
+                    </div>
+                `;
+
+                groupedMessages[dateKey].forEach(msg => {
+                    const isMe = msg.senderId === currentUser?.uid;
+                    const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) : '';
+                    const checkMark = isMe ? (msg.read ? '<span class="wa-check-read">✓✓</span>' : '<span class="wa-check">✓✓</span>') : '';
+
+                    if (isMe) {
+                        // Pesan dari saya (kanan) - WhatsApp green bubble
+                        html += `
+                            <div class="flex justify-end mb-1">
+                                <div class="max-w-[85%] mr-2">
+                                    <div class="wa-bubble-out px-3 py-1.5 shadow-sm">
+                                        <p class="text-[14.5px] text-gray-800 leading-relaxed">${escapeHtml(msg.message)}</p>
+                                        <div class="flex items-center justify-end gap-1 -mb-0.5 mt-0.5">
+                                            <span class="wa-time">${time}</span>
+                                            ${checkMark}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        // Pesan dari partner (kiri) - white bubble
+                        const senderColor = msg.senderRole === 'seller' ? 'text-[#06cf9c]' : 'text-[#ff6b6b]';
+                        html += `
+                            <div class="flex justify-start mb-1">
+                                <div class="max-w-[85%] ml-2">
+                                    <div class="wa-bubble-in px-3 py-1.5 shadow-sm">
+                                        <p class="text-xs font-medium ${senderColor} mb-0.5">${escapeHtml(msg.senderName)}</p>
+                                        <p class="text-[14.5px] text-gray-800 leading-relaxed">${escapeHtml(msg.message)}</p>
+                                        <div class="flex items-center justify-end -mb-0.5 mt-0.5">
+                                            <span class="wa-time">${time}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                });
+            });
+
+            container.innerHTML = html;
+
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function sendChatMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+
+            if (!message || !currentChatOrderId || !currentUser) return;
+
+            // Clear input
+            input.value = '';
+
+            try {
+                const msgId = 'MSG' + Date.now().toString(36).toUpperCase();
+                await db.collection('chats').doc(msgId).set({
+                    id: msgId,
+                    orderId: currentChatOrderId,
+                    senderId: currentUser.uid,
+                    senderName: currentUserData?.name || 'User',
+                    senderRole: currentUserData?.role || 'buyer',
+                    message: message,
+                    timestamp: Date.now(),
+                    read: false
+                });
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('Gagal mengirim pesan: ' + error.message);
+                input.value = message; // Restore message
+            }
+        }
+
+        async function markMessagesAsRead(orderId) {
+            if (!db || !currentUser) return;
+
+            try {
+                const unreadMessages = await db.collection('chats')
+                    .where('orderId', '==', orderId)
+                    .where('read', '==', false)
+                    .get();
+
+                const batch = db.batch();
+                unreadMessages.docs.forEach(doc => {
+                    const msg = doc.data();
+                    // Only mark as read if the message is not from current user
+                    if (msg.senderId !== currentUser.uid) {
+                        batch.update(doc.ref, { read: true });
+                    }
+                });
+                await batch.commit();
+            } catch (error) {
+                console.error('Error marking messages as read:', error);
+            }
+        }
+
+        // Update unread count for floating button
+        function updateUnreadChatCount() {
+            if (!db || !currentUser) return;
+
+            // Get all orders for current user
+            const orderIds = ordersCache.map(o => o.id);
+            if (orderIds.length === 0) return;
+
+            // Count unread messages not sent by current user
+            db.collection('chats')
+                .where('read', '==', false)
+                .get()
+                .then(snapshot => {
+                    let unreadCount = 0;
+                    snapshot.docs.forEach(doc => {
+                        const msg = doc.data();
+                        if (orderIds.includes(msg.orderId) && msg.senderId !== currentUser.uid) {
+                            unreadCount++;
+                        }
+                    });
+
+                    // Update badge
+                    const badgeBuyer = document.getElementById('chatBadgeBuyer');
+                    const badgeSeller = document.getElementById('chatBadgeSeller');
+
+                    if (badgeBuyer) {
+                        if (unreadCount > 0) {
+                            badgeBuyer.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                            badgeBuyer.classList.remove('hidden');
+                        } else {
+                            badgeBuyer.classList.add('hidden');
+                        }
+                    }
+
+                    if (badgeSeller) {
+                        if (unreadCount > 0) {
+                            badgeSeller.textContent = unreadCount > 9 ? '9+' : unreadCount;
+                            badgeSeller.classList.remove('hidden');
+                        } else {
+                            badgeSeller.classList.add('hidden');
+                        }
+                    }
+                });
+        }
+
+        // Call updateUnreadChatCount periodically
+        setInterval(updateUnreadChatCount, 5000);
+
+        // Show/hide floating chat based on mode
+        function updateFloatingChat() {
+            const buyerFloat = document.getElementById('floatingChatBuyer');
+            const sellerFloat = document.getElementById('floatingChatSeller');
+            
+            if (currentMode === 'buyer') {
+                buyerFloat?.classList.remove('hidden');
+                sellerFloat?.classList.add('hidden');
+            } else if (currentMode === 'seller') {
+                sellerFloat?.classList.remove('hidden');
+                buyerFloat?.classList.add('hidden');
+            } else {
+                buyerFloat?.classList.add('hidden');
+                sellerFloat?.classList.add('hidden');
+            }
+        }
+
+        // Override setMode to show floating chat
+        const originalSetMode = setMode;
+        setMode = async function(mode) {
+            await originalSetMode(mode);
+            updateFloatingChat();
+        };
 
         // Initialize
         initFirebase();
